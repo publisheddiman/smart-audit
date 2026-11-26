@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Audit Live — Low Carbon Energy Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF6F0; --bg2:#E4F1E8; --surface:#FFFFFF; --surface2:#F4FAF6;
+  --line:#D8E8DE; --line2:#C4DDCE;
+  --ink:#123527; --ink2:#2E4B3E; --muted:#6A8478; --dim:#93A99D;
+  --green:#159B6B; --green-d:#0E7C54; --green-l:#5FCB9B; --mint:#DCF3E7;
+  --leaf:#7DC24B;
+  --coral:#E0725C; --coral-bg:#FBEAE5;
+  --blue:#2E9BD6; --violet:#9B87C4;
+  --s1:#E0725C; --s2:#2E9BD6; --s3:#9B87C4;
+  --shadow:0 1px 2px rgba(16,60,40,.04),0 8px 24px rgba(16,60,40,.06);
+  --shadow-lg:0 12px 40px rgba(16,60,40,.14);
+  --mono:"Space Mono",ui-monospace,Menlo,Consolas,monospace;
+  --sans:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --r:16px; --r2:11px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:
+  radial-gradient(1100px 600px at 100% -5%, rgba(125,194,75,.10), transparent 60%),
+  radial-gradient(900px 600px at -5% 0%, rgba(21,155,107,.08), transparent 55%),
+  var(--bg);
+  color:var(--ink2);font-family:var(--sans);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{color:var(--ink);margin:0}
+button{font-family:var(--sans)}
+input,select,textarea{font-family:var(--sans)}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+
+/* header */
+header.top{position:sticky;top:0;z-index:60;backdrop-filter:blur(10px);
+  background:rgba(238,246,240,.86);border-bottom:1px solid var(--line)}
+.topbar{max-width:1360px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.brandlogo{height:42px;width:auto;display:block;flex:0 0 auto}
+.brand h1{font-size:16px;letter-spacing:.02em;font-weight:800}
+.brand p{margin:0;font-size:10px;letter-spacing:.2em;color:var(--green-d);text-transform:uppercase;font-weight:600}
+.spacer{flex:1 1 auto}
+.selwrap{position:relative}
+select.company,select.field{appearance:none;background:var(--surface);color:var(--ink);border:1px solid var(--line2);
+  border-radius:11px;padding:10px 34px 10px 13px;font-size:13px;font-weight:600;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%236A8478' stroke-width='2'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center}
+.btn{display:inline-flex;align-items:center;gap:7px;background:var(--green);color:#fff;font-weight:700;border:none;
+  border-radius:11px;padding:10px 16px;font-size:13px;cursor:pointer;box-shadow:0 4px 12px rgba(21,155,107,.28)}
+.btn:hover{background:var(--green-d)}
+.btn[hidden]{display:none}
+.btn:disabled{opacity:.55;cursor:default}
+.btn.sec{background:var(--surface);color:var(--ink);border:1px solid var(--line2);box-shadow:none}
+.btn.sec:hover{background:var(--surface2)}
+.btn.sm{padding:7px 12px;font-size:12px;border-radius:9px}
+.btn.danger{background:var(--surface);color:var(--coral);border:1px solid var(--coral);box-shadow:none}
+.live{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;background:var(--surface);
+  border:1px solid var(--line);border-radius:999px;padding:7px 13px;color:var(--muted)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.8s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(21,155,107,.5)}70%{box-shadow:0 0 0 7px rgba(21,155,107,0)}100%{box-shadow:0 0 0 0 rgba(21,155,107,0)}}
+
+/* layout */
+.app{max-width:1360px;margin:0 auto;padding:18px;display:grid;grid-template-columns:238px 1fr;gap:18px;align-items:start}
+nav.side{position:sticky;top:78px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px;box-shadow:var(--shadow)}
+.navitem{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:11px;cursor:pointer;color:var(--ink2);font-weight:600;font-size:13.5px;transition:background .15s}
+.navitem:hover{background:var(--surface2)}
+.navitem.active{background:var(--mint);color:var(--green-d)}
+.navitem svg{width:18px;height:18px;flex:0 0 auto;stroke:currentColor}
+.navitem .num{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--dim)}
+.navitem.active .num{color:var(--green)}
+main.main{min-width:0}
+
+/* module head */
+.mhead{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.mhead .eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--green-d);font-weight:700}
+.mhead h2{font-size:22px;font-weight:800;margin-top:3px}
+.mhead p{margin:5px 0 0;font-size:13px;color:var(--muted);max-width:640px}
+
+/* cards */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}
+.card+.card{margin-top:16px}
+.card h3{font-size:14.5px;font-weight:800}
+.card .cap{margin:2px 0 15px;font-size:12.5px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1.05fr 1fr;gap:16px}
+.grid2>.card{margin-top:0}
+
+/* verdict */
+.verdict{border-radius:var(--r);border:1px solid var(--line);overflow:hidden;position:relative;box-shadow:var(--shadow)}
+.verdict .rail{position:absolute;left:0;top:0;bottom:0;width:6px}
+.verdict .inner{padding:20px 22px;display:flex;gap:20px;align-items:center;flex-wrap:wrap;background:var(--surface)}
+.verdict .who{flex:1 1 300px}
+.verdict .sector{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.verdict .who h2{font-size:22px;margin:4px 0 6px}
+.verdict .cite{font-size:12.5px;color:var(--muted)}
+.verdict .stamp{text-align:right}
+.verdict .stamp .lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.verdict .stamp .big{font-family:var(--sans);font-size:30px;font-weight:800;line-height:1;margin-top:5px}
+.verdict .stamp .sub{font-size:12px;color:var(--muted);margin-top:6px;font-family:var(--mono)}
+
+/* kpis */
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:16px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r2);padding:14px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.kpi .k{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.kpi .v{font-family:var(--mono);font-size:22px;font-weight:700;margin-top:9px;line-height:1;color:var(--ink)}
+.kpi .u{font-size:11px;color:var(--dim)}
+.kpi .d{font-size:11px;margin-top:7px;color:var(--muted)}
+.kpi .bar{position:absolute;left:0;bottom:0;height:3px;background:var(--green)}
+
+/* gauge + so-what */
+.gaugewrap{display:flex;flex-direction:column;align-items:center}
+.greadout{text-align:center;margin-top:4px}
+.greadout .num{font-family:var(--mono);font-size:34px;font-weight:700;line-height:1}
+.greadout .lbl{font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
+.sowhat{margin-top:14px;padding:11px 13px;border-radius:11px;background:var(--mint);font-size:12.5px;color:var(--ink2)}
+.sowhat b{color:var(--ink)}
+.sowhat .tag{color:var(--green-d);font-weight:800;letter-spacing:.04em;margin-right:6px}
+
+/* scope emission */
+.scoperow{display:flex;gap:10px;margin-top:4px}
+.scopebox{flex:1;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:13px}
+.scopebox .t{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center;gap:6px}
+.scopebox .sw{width:9px;height:9px;border-radius:3px}
+.scopebox .n{font-family:var(--mono);font-size:20px;font-weight:700;margin-top:8px}
+.scopebox .s{font-size:10.5px;color:var(--muted);margin-top:3px}
+.stackbar{display:flex;height:14px;border-radius:8px;overflow:hidden;margin-top:14px;border:1px solid var(--line)}
+.stackbar span{display:block;height:100%}
+
+/* source bars */
+.src{display:flex;flex-direction:column;gap:12px}
+.srcrow{display:grid;grid-template-columns:120px 1fr 96px;gap:12px;align-items:center}
+.srcrow .nm{font-size:12.5px;font-weight:600}
+.srcrow .nm small{display:block;color:var(--dim);font-weight:400;font-size:10.5px}
+.track{height:9px;border-radius:6px;background:var(--surface2);overflow:hidden;border:1px solid var(--line)}
+.fill{height:100%;border-radius:6px;transition:width .6s cubic-bezier(.2,.7,.2,1)}
+.srcrow .val{font-family:var(--mono);font-size:12px;text-align:right;color:var(--muted)}
+.srcrow .val b{color:var(--ink)}
+.legendrow{display:flex;gap:14px;flex-wrap:wrap;margin-top:13px;font-size:12px;color:var(--muted)}
+.legendrow .li{display:flex;align-items:center;gap:7px}
+.swatch{width:11px;height:11px;border-radius:3px}
+
+/* workflow */
+.flow{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.step{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:12px}
+.step .n{font-family:var(--mono);font-size:10.5px;color:var(--dim)}
+.step .t{font-size:12px;font-weight:700;margin:6px 0 9px;min-height:32px;color:var(--ink)}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;padding:4px 9px;border-radius:999px;text-transform:uppercase}
+.pill .pd{width:7px;height:7px;border-radius:50%}
+.p-done{background:var(--mint);color:var(--green-d)} .p-done .pd{background:var(--green)}
+.p-wait{background:#EEF2F0;color:var(--dim)} .p-wait .pd{background:var(--dim)}
+
+/* tables & forms */
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:11px 9px;font-size:12.5px;border-bottom:1px solid var(--line)}
+th{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+td.num,th.num{text-align:right;font-family:var(--mono)}
+.badge{display:inline-block;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px}
+.b-hi{background:var(--coral-bg);color:var(--coral)}
+.b-md{background:#E8F1FA;color:var(--blue)}
+.b-ok{background:var(--mint);color:var(--green-d)}
+.field label,.flabel{display:block;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-weight:600}
+.field input,.field select,.field textarea{width:100%;background:var(--surface2);border:1px solid var(--line2);border-radius:10px;color:var(--ink);font-size:14px;padding:11px 12px}
+.field input.mono{font-family:var(--mono)}
+.field .hint{font-size:10.5px;color:var(--dim);margin-top:5px}
+.field textarea{min-height:78px;resize:vertical}
+.field,.table-wrap{min-width:0}
+.table-wrap{overflow:auto}
+.required{color:#a43e2c;font-weight:800}
+.form-actions,.row-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.form-actions{margin-top:14px}
+.form-status{margin:0;color:var(--green-d);font-size:12px;line-height:1.5}
+.form-status.error{color:#a43e2c}
+.form-status:empty{display:none}
+.workspace-message{max-width:1324px;margin:14px auto 0;padding:0 18px}
+.file-link{border:0;background:none;padding:0;color:var(--green-d);font-size:inherit;font-weight:700;text-decoration:underline;text-align:left;cursor:pointer;overflow-wrap:anywhere}
+.attachment-file:empty{display:none}
+.rowitem .g{overflow-wrap:anywhere}
+.subform{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.travel-group{min-width:0;margin:0;padding:12px;border:1px solid var(--line);border-radius:12px}
+.travel-group legend{padding:0 6px;font-weight:700;color:var(--ink)}
+.report-dialog{padding:0;width:min(850px,calc(100% - 20px));max-width:none;max-height:calc(100% - 24px);border:1px solid var(--line2);border-radius:16px;color:var(--ink);box-shadow:var(--shadow-lg)}
+.report-dialog::backdrop{background:#123527a6}
+.report-toolbar{position:sticky;top:0;z-index:1;padding:12px 20px;background:var(--surface);border-bottom:1px solid var(--line);justify-content:flex-end}
+.report{background:white;padding:30px;color:#21372d;font:13px/1.5 var(--sans);overflow-wrap:anywhere}
+.report-mast{border-top:5px solid #118054;padding-top:12px;margin-bottom:18px}
+.report-brand{margin:0 0 8px;color:#0e714d;font-weight:800;text-transform:uppercase;letter-spacing:.13em;font-size:.84em}
+.report h2{font-size:2.15em;letter-spacing:-.035em;line-height:1.1}
+.report-mast p:not(.report-brand){margin:.5em 0 0}
+.report-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:16px}
+.report-kpi{border:1px solid #cde3d8;background:#eef7f1;border-radius:8px;padding:9px 11px}
+.report-kpi small,.report-kpi strong{display:block}
+.report-kpi strong{font-size:1.25em;line-height:1.35}
+.report section{margin-top:16px}
+.report h3{color:#0c6545;font-size:1.15em;border-bottom:1px solid #cde3d8;padding-bottom:4px;margin:0 0 5px}
+.report p{margin:5px 0}
+.report table{table-layout:auto}
+.report th,.report td{font:inherit;padding:4px 7px;vertical-align:top}
+.report th{background:#eaf5ef;color:#174532;font-size:.91em;font-weight:750;text-transform:none;letter-spacing:0}
+.report-note{color:#4d685b;font-size:.88em}
+.report-notice{padding:8px 10px;border-left:3px solid #b87936;background:#fff6e9}
+.report-lead{break-after:avoid}
+@page{
+  size:A4;
+  margin:14mm 14mm 17mm;
+  @bottom-left{content:"Smart Audit Live · Rekap Tahunan";color:#4d685b;font:8pt Arial,sans-serif}
+  @bottom-right{content:"Halaman " counter(page) " / " counter(pages);color:#4d685b;font:8pt Arial,sans-serif}
+}
+@media print{
+  body:has(.report-dialog[open]){margin:0;background:#fff}
+  body:has(.report-dialog[open]) > :not(.report-dialog){display:none!important}
+  .report-dialog[open]{position:static;inset:auto;display:block;width:100%;max-width:none;height:auto;max-height:none;margin:0;overflow:visible;border:0;border-radius:0;box-shadow:none}
+  .report-dialog::backdrop,.report-toolbar{display:none}
+  .report{padding:0;font-size:9.5pt;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .report-mast,.report-kpis,.report tr{break-inside:avoid}
+  .report h3{break-after:avoid}
+  .report thead{display:table-header-group}
+}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.formgrid.three{grid-template-columns:1fr 1fr 1fr}
+.formrow{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.formrow .field{flex:1 1 140px}
+.rowlist{display:flex;flex-direction:column;gap:8px}
+.rowitem{display:flex;align-items:center;gap:12px;padding:11px 13px;border:1px solid var(--line);border-radius:11px;background:var(--surface2)}
+.rowitem .g{flex:1 1 auto;min-width:0}
+.rowitem .g .t{font-size:13px;font-weight:700;color:var(--ink)}
+.rowitem .g .s{font-size:11.5px;color:var(--muted)}
+.icon-btn{background:none;border:none;color:var(--dim);cursor:pointer;font-size:16px;padding:4px 8px;border-radius:8px}
+.icon-btn:hover{background:var(--coral-bg);color:var(--coral)}
+.calcout{background:var(--mint);border:1px solid var(--line2);border-radius:12px;padding:15px 16px}
+.calcout .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.calcout .row+.row{margin-top:9px;padding-top:9px;border-top:1px solid rgba(21,155,107,.15)}
+.calcout .lab{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.calcout .out{font-family:var(--mono);font-size:19px;font-weight:700;color:var(--ink)}
+.savechip{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--green-d);background:var(--mint);padding:6px 11px;border-radius:999px;font-weight:600;opacity:0;transition:opacity .3s}
+.savechip.show{opacity:1}
+.savebar{display:flex;align-items:center;gap:14px;margin-top:20px;padding-top:18px;border-top:1px solid var(--line);flex-wrap:wrap}
+.savehint{color:var(--muted);font-size:12px}
+
+/* regs */
+.reglist{display:flex;flex-direction:column;gap:10px}
+.reg{display:flex;gap:13px;align-items:flex-start;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--surface2)}
+.reg .rc{width:32px;height:32px;border-radius:9px;background:var(--mint);color:var(--green-d);display:grid;place-items:center;flex:0 0 auto;font-weight:800}
+.reg .g{flex:1 1 auto;min-width:0}
+.reg .g .t{font-weight:700;color:var(--ink);font-size:13.5px}
+.reg .g .r{font-size:11.5px;color:var(--green-d);font-family:var(--mono);margin:2px 0}
+.reg .g .n{font-size:12px;color:var(--muted)}
+
+/* empty state */
+.empty{text-align:center;padding:56px 24px;background:var(--surface);border:1px dashed var(--line2);border-radius:var(--r)}
+.empty .ic{width:64px;height:64px;border-radius:20px;margin:0 auto 16px;background:var(--mint);display:grid;place-items:center}
+.empty h3{font-size:18px}
+.empty p{color:var(--muted);margin:8px auto 20px;max-width:420px}
+.empty .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+/* modal */
+.overlay{position:fixed;inset:0;background:rgba(16,60,40,.4);backdrop-filter:blur(3px);display:none;place-items:center;z-index:100;padding:20px}
+.overlay.show{display:grid}
+.modal{background:var(--surface);border-radius:18px;box-shadow:var(--shadow-lg);width:100%;max-width:440px;padding:24px}
+.modal h3{font-size:18px}
+.modal .cap{color:var(--muted);font-size:13px;margin:4px 0 18px}
+.modal .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+
+.disclaimer{margin-top:22px;font-size:11.5px;color:var(--dim);line-height:1.7;border-top:1px solid var(--line);padding-top:14px}
+.disclaimer b{color:var(--muted)}
+
+@media(max-width:1080px){
+  .app{grid-template-columns:1fr}
+  nav.side{position:static;display:flex;gap:6px;overflow-x:auto;top:0}
+  .navitem{flex:0 0 auto;flex-direction:column;gap:5px;font-size:11px;text-align:center;padding:9px 11px}
+  .navitem .num{display:none}
+  .kpis{grid-template-columns:repeat(3,1fr)}
+  .grid2{grid-template-columns:1fr}
+  .flow{grid-template-columns:repeat(3,1fr)}
+  .scoperow{flex-direction:column}
+}
+@media(max-width:560px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .flow{grid-template-columns:1fr 1fr}
+  .formgrid,.formgrid.three{grid-template-columns:1fr}
+  .verdict .stamp{text-align:left}
+  .srcrow{grid-template-columns:92px 1fr 76px}
+  .report{padding:15px}
+  .report-kpis{grid-template-columns:1fr}
+  .report table{font-size:10px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="topbar">
+    <div class="brand">
+      <img class="brandlogo" src="data:image/png;base64,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" alt="BKI">
+      <div>
+        <h1>Smart Audit Live</h1>
+        <p>Low Carbon Energy Audit</p>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="selwrap"><select class="company" id="companySel" aria-label="Pilih klien"></select></div>
+    <button class="btn sec sm" id="btnAdd">+ Klien</button>
+    <div class="live"><span class="dot"></span><span id="clock">--:--:--</span></div>
+  </div>
+</header>
+
+<p class="workspace-message form-status error" id="workspaceMessage" role="status"></p>
+<div class="app">
+  <nav class="side" id="nav"></nav>
+  <main class="main" id="main"></main>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3 id="modalTitle">Tambah Klien / Objek Audit</h3>
+    <p class="cap">Auditor mengisi identitas dasar. Detail lain diisi di modul Profil &amp; Pelaksanaan Audit.</p>
+    <div class="field" style="margin-bottom:14px">
+      <label>Nama Perusahaan</label>
+      <input id="mName" type="text" placeholder="cth. PT Contoh Energi">
+    </div>
+    <div class="field">
+      <label>Sektor Usaha</label>
+      <select id="mSector" class="field"></select>
+    </div>
+    <div class="actions">
+      <button class="btn sec" id="mCancel">Batal</button>
+      <button class="btn" id="mSave">Simpan</button>
+    </div>
+    <p class="form-status" role="status"></p>
+  </div>
+</div>
+
+<dialog class="report-dialog" id="annualReport" aria-labelledby="reportTitle">
+  <div class="report-toolbar row-actions">
+    <button class="btn sec" id="closeReport">Tutup</button>
+    <button class="btn" id="printReport">Cetak / Simpan PDF</button>
+  </div>
+  <article class="report" id="reportContent"></article>
+</dialog>
+
+<script>
+"use strict";
+/* ============ konstanta domain ============ */
+const TOE_GJ = 41.868;
+const SECTORS = {
+  BANGUNAN:{name:"Bangunan Gedung", thr:500,  ex:"Mal, hotel, RS, kampus, perkantoran"},
+  INDUSTRI:{name:"Industri",        thr:4000, ex:"Semen, baja, tekstil"},
+  TRANSPORTASI:{name:"Transportasi",thr:4000, ex:"Logistik, maskapai, angkutan massal"},
+  PENYEDIA:{name:"Penyedia Energi", thr:6000, ex:"Pembangkit, migas, tambang batubara"}
+};
+// energy content (GJ/unit), faktor emisi (tCO2e/GJ), scope
+const CARRIERS = [
+  {key:"listrik_kwh", nm:"Listrik PLN", unit:"kWh",   gj:0.0036, ef:0.2194, scope:2, color:"#2E9BD6"},
+  {key:"solar_l",     nm:"Solar/Diesel",unit:"liter", gj:0.036,  ef:0.0744, scope:1, color:"#E0725C"},
+  {key:"gas_m3",      nm:"Gas Alam",    unit:"m³",     gj:0.0388, ef:0.056,  scope:1, color:"#7DC24B"},
+  {key:"batubara_kg", nm:"Batubara",    unit:"kg",     gj:0.0246, ef:0.0946, scope:1, color:"#6A8478"},
+  {key:"lpg_kg",      nm:"LPG",         unit:"kg",     gj:0.0473, ef:0.063,  scope:1, color:"#C98A3B"}
+];
+const REQUIRED_CARRIERS = ['listrik_kwh','solar_l'];
+const TRAVEL_CATEGORIES = {business:'Perjalanan Dinas',commuting:'Perjalanan Karyawan ke Kantor'};
+const PROFILE_FIELDS = ['name','sector','jamOperasi','area_m2','deskripsi'];
+const carriersFor = sector => CARRIERS.filter(cr=>cr.key!=='batubara_kg'||sector==='PENYEDIA');
+const localYear = () => String(new Date().getFullYear());
+const blankAudit = () => ({tanggal:'',lingkup:'',metode:''});
+const blankTravel = () => ({business:[],commuting:[],notes:''});
+const DEFAULT_REGS = [
+  {t:"Manajemen Energi", r:"Permen ESDM No. 8 Tahun 2025", n:"Mewajibkan audit energi & manajemen energi di atas ambang batas sektor."},
+  {t:"Konservasi Energi", r:"PP No. 33 Tahun 2023", n:"Kerangka konservasi energi nasional (pengganti PP 70/2009)."},
+  {t:"Energi", r:"UU No. 30 Tahun 2007", n:"Dasar hukum kebijakan energi & konservasi."},
+  {t:"Sistem Manajemen Energi", r:"ISO 50001:2018", n:"Standar SME — syarat kredibilitas konsultan audit energi."},
+  {t:"Sistem Manajemen Lingkungan", r:"ISO 14001:2015", n:"Pendukung agenda ESG & tata kelola lingkungan."},
+  {t:"Kuantifikasi Emisi GRK", r:"ISO 14064-1 / GHG Protocol", n:"Basis perhitungan emisi Scope 1, 2, 3."},
+  {t:"Nilai Ekonomi Karbon", r:"Perpres No. 98 Tahun 2021", n:"Kerangka perdagangan & pajak karbon nasional."}
+];
+
+/* ============ util ============ */
+const $ = s => document.getElementById(s);
+const fmt=(n,d=0)=>new Intl.NumberFormat('id-ID',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n||0);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function rp(n){n=+n||0;if(n>=1e12)return 'Rp'+fmt(n/1e12,1)+' T';if(n>=1e9)return 'Rp'+fmt(n/1e9,1)+' M';if(n>=1e6)return 'Rp'+fmt(n/1e6,0)+' jt';return 'Rp'+fmt(n);}
+const uid=()=>'c'+Math.random().toString(36).slice(2,8)+Date.now().toString(36).slice(-3);
+
+/* ============ store ============ */
+const KEY='smartAuditLive.v2';
+const cloud=window.smartAuditCloud;
+const VIEW_KEY=KEY+'.onlineView';
+function readLocal(key){try{return JSON.parse(localStorage.getItem(key))||null}catch(error){return null}}
+const store={
+  save(next){return cloud?cloud.save(next):localStorage.setItem(KEY,JSON.stringify(next));},
+  saveView(){
+    try{
+      const view=cloud?{currentId:state.currentId,view:state.view}:state;
+      localStorage.setItem(cloud?VIEW_KEY:KEY,JSON.stringify(view));
+    }catch(error){}
+  }
+};
+let state;
+
+function blankCompany(name,sector){
+  return {id:uid(),name:name,sector:sector,
+    jamOperasi:'',deskripsi:'',
+    managers:[], structureFile:null, area_m2:null,
+    audit:blankAudit(), consumption:{}, travel:blankTravel(),
+    auditYear:'', auditYears:{}, pendingAudit:null, savings_pct:0,
+    recs:[], certs:[], qualif:[], docs:[]
+  };
+}
+function current(){return state.companies.find(c=>c.id===state.currentId)||null;}
+
+function hasConsumption(consumption,key){
+  const value=consumption[key];
+  return value!==null&&value!==''&&Number.isFinite(Number(value))&&Number(value)>=0;
+}
+function profileComplete(c){
+  return PROFILE_FIELDS.every(key=>String(c[key]??'').trim()!=='')&&
+    Object.hasOwn(SECTORS,c.sector)&&Number.isFinite(Number(c.area_m2))&&Number(c.area_m2)>=0;
+}
+function annualRecord(c,values){
+  const {name,sector,jamOperasi,area_m2,deskripsi,managers,structureFile,certs,qualif,docs}=c;
+  return {profile:structuredClone({name,sector,jamOperasi,area_m2,deskripsi,managers,structureFile,certs,qualif,docs}),...values};
+}
+function hasLegacyAudit(c){
+  return (c.legacyAudit||Object.hasOwn(c,'scope3'))&&!c.auditYear&&!Object.keys(c.auditYears).length&&
+    !!(c.audit.tanggal||c.audit.lingkup||c.audit.metode||c.recs.length||
+       Object.values(c.consumption).some(value=>Number(value)>0));
+}
+function legacyAuditRecord(c){
+  return annualRecord(c,{audit:c.audit,consumption:c.consumption,travel:c.travel,
+    recs:c.recs,savings_pct:c.savings_pct,legacy:true});
+}
+function migrateCompany(c){
+  if(!c.auditYears){
+    c.legacyAudit=true;
+    c.auditYears={};
+    c.auditYear='';
+    c.travel=blankTravel();
+    c.area_m2=c.area_m2||null;
+    // The old form stored an unfilled consumption input as zero.
+    c.consumption=Object.fromEntries(Object.entries(c.consumption||{}).filter(([,value])=>Number(value)>0));
+  }
+  if(hasLegacyAudit(c)&&/^\d{4}-/.test(c.audit.tanggal)){
+    c.auditYear=c.audit.tanggal.slice(0,4);
+    c.auditYears[c.auditYear]=legacyAuditRecord(c);
+  }
+}
+/* ============ perhitungan ============ */
+function metrics(c){
+  const src=carriersFor(c.sector).map(cr=>{
+    const qty=+(c.consumption[cr.key]||0);
+    const gj=qty*cr.gj;
+    return {...cr, qty, gj, toe:gj/TOE_GJ, emis:gj*cr.ef};
+  }).filter(s=>s.qty>0);
+  const totalGj=src.reduce((a,s)=>a+s.gj,0);
+  const totalToe=totalGj/TOE_GJ;
+  const thr=SECTORS[c.sector]?SECTORS[c.sector].thr:500;
+  const scope1=src.filter(s=>s.scope===1).reduce((a,s)=>a+s.emis,0);
+  const scope2=src.filter(s=>s.scope===2).reduce((a,s)=>a+s.emis,0);
+  const kwhEq= c.consumption.listrik_kwh>0 ? +c.consumption.listrik_kwh : totalGj/0.0036;
+  const ike= c.area_m2>0 ? kwhEq/c.area_m2 : 0;
+  const savedRp=(c.recs||[]).reduce((a,r)=>a+(+r.save||0),0);
+  // kelengkapan data (6 langkah) -> workflow
+  const steps=[
+    {t:"Profil perusahaan", done: profileComplete(c)},
+    {t:"Data konsumsi energi", done: REQUIRED_CARRIERS.every(key=>hasConsumption(c.consumption,key))},
+    {t:"Pelaksanaan audit", done: !!c.auditYear},
+    {t:"Hasil & rekomendasi", done: (c.recs&&c.recs.length>0)},
+    {t:"Kualifikasi personil", done: (c.qualif&&c.qualif.length>0)},
+    {t:"Dokumen laporan", done: (c.docs&&c.docs.length>0)}
+  ];
+  const progress=Math.round(steps.filter(s=>s.done).length/steps.length*100);
+  return {src,totalGj,totalToe,thr,over:totalToe>=thr,gap:totalToe-thr,
+    scope1,scope2,emisTotal:scope1+scope2,ike,savedRp,steps,progress};
+}
+
+/* ============ navigasi ============ */
+const NAV=[
+  {v:"dashboard", t:"Dashboard", ic:'<path d="M3 13h8V3H3zM13 21h8V3h-8zM3 21h8v-6H3z"/>'},
+  {v:"regulasi", t:"Standar & Regulasi", ic:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>'},
+  {v:"profil", t:"Profil Perusahaan", ic:'<path d="M3 21h18M6 21V7l6-4 6 4v14M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01"/>'},
+  {v:"penghargaan", t:"Penghargaan", ic:'<circle cx="12" cy="8" r="6"/><path d="M8.21 13.89 7 22l5-3 5 3-1.21-8.11"/>'},
+  {v:"kualifikasi", t:"Kualifikasi", ic:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 10h8M8 14h5"/>'},
+  {v:"audit", t:"Pelaksanaan Audit", ic:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>'},
+  {v:"hasil", t:"Hasil Audit", ic:'<path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/>'},
+  {v:"dokumen", t:"Dokumen", ic:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>'}
+];
+function renderNav(){
+  $('nav').innerHTML=NAV.map((n,i)=>`<div class="navitem ${state.view===n.v?'active':''}" data-v="${n.v}">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${n.ic}</svg>
+    <span>${n.t}</span><span class="num">0${i+1}</span></div>`).join('');
+  $('nav').querySelectorAll('.navitem').forEach(el=>el.onclick=()=>{state.view=el.dataset.v;store.saveView();render();});
+}
+function renderCompanySel(){
+  const sel=$('companySel');
+  if(!state.companies.length){sel.innerHTML='<option>— belum ada klien —</option>';sel.disabled=true;return;}
+  sel.disabled=false;
+  sel.innerHTML=state.companies.map(c=>`<option value="${esc(c.id)}" ${c.id===state.currentId?'selected':''}>${esc(c.name)}</option>`).join('');
+  sel.onchange=()=>{state.currentId=sel.value;store.saveView();render();};
+}
+
+/* ============ render utama ============ */
+function render(){
+  renderNav(); renderCompanySel();
+  const c=current();
+  const main=$('main');
+  if(!c){ main.innerHTML=emptyState(); bindEmpty(); return; }
+  const map={dashboard:vDashboard,regulasi:vRegulasi,profil:vProfil,penghargaan:vPenghargaan,
+            kualifikasi:vKualifikasi,audit:vAudit,hasil:vHasil,dokumen:vDokumen};
+  main.innerHTML=(map[state.view]||vDashboard)(c);
+  const b={dashboard:bindDashboard,profil:bindProfil,penghargaan:bindPenghargaan,kualifikasi:bindKualifikasi,
+           audit:bindAudit,hasil:bindHasil,dokumen:bindDokumen,regulasi:bindRegulasi}[state.view];
+  if(b) b(c);
+  bindDownloads(main);
+}
+
+function emptyState(){
+  return `<div class="empty">
+    <div class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0E7C54" stroke-width="2" stroke-linecap="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div>
+    <h3>Belum ada klien</h3>
+    <p>Mulai dengan menambahkan perusahaan/objek audit. Auditor mengisi seluruh data secara manual di tiap modul.</p>
+    <div class="row"><button class="btn" id="emAdd">+ Tambah Klien</button>${cloud?'':'<button class="btn sec" id="emDemo">Muat contoh (BKI)</button>'}</div>
+    ${formStatus}
+  </div>`;
+}
+function bindEmpty(){
+  $('emAdd').onclick=openModal;
+  if($('emDemo'))$('emDemo').onclick=loadDemo;
+}
+
+/* ---------- 1. DASHBOARD ---------- */
+function vDashboard(c){
+  const m=metrics(c); const S=SECTORS[c.sector];
+  const col=m.over?'var(--coral)':'var(--green)';
+  const kpi=(k,v,u,d,cl)=>`<div class="kpi"><div class="k">${k}</div><div class="v" style="color:${cl||'var(--ink)'}">${v}<span class="u"> ${u}</span></div><div class="d">${d}</div><div class="bar" style="background:${cl||'var(--green)'}"></div></div>`;
+  const maxSrc=Math.max(1,...m.src.map(s=>s.gj));
+  const et=m.emisTotal||1;
+  return `
+  <div class="verdict"><div class="rail" style="background:${col}"></div><div class="inner">
+    <div class="who"><div class="sector">${esc(S.name)} · ambang ${fmt(m.thr)} TOE/th</div>
+      <h2>${esc(c.name)}</h2>
+      <div class="cite">${c.auditYear?`Tahun audit ${esc(c.auditYear)} · `:''}${m.totalGj>0?(m.over?'Wajib menerapkan manajemen energi & audit energi berkala — Permen ESDM No. 8/2025 Pasal 2.':'Di bawah ambang wajib — audit energi bersifat sukarela namun didorong.'):'Isi konsumsi di modul Pelaksanaan Audit.'}</div></div>
+    <div class="stamp"><div class="lbl">Status Kewajiban Audit</div>
+      <div class="big" style="color:${col}">${m.totalGj>0?(m.over?'WAJIB':'SUKARELA'):'—'}</div>
+      <div class="sub">${m.totalGj>0?((m.over?'+':'')+fmt(m.gap,0)+' TOE dari ambang'):'menunggu data'}</div></div>
+  </div></div>
+
+  <div class="kpis">
+    ${kpi('Total Konsumsi',fmt(m.totalToe,0),'TOE/th',fmt(m.totalGj,0)+' GJ',col)}
+    ${kpi('Ambang Sektor',fmt(m.thr),'TOE',m.over?'terlampaui':'belum tercapai',col)}
+    ${kpi('Emisi Total',fmt(m.emisTotal,0),'tCO₂e','Scope 1 + Scope 2','var(--violet)')}
+    ${kpi('Intensitas (IKE)',m.ike>0?fmt(m.ike,0):'—',m.ike>0?'kWh/m²':'',m.ike>0?'per tahun':'isi luas bangunan','var(--blue)')}
+    ${kpi('Potensi Hemat',fmt(c.savings_pct||0),'%','≈ '+rp(m.savedRp)+'/th','var(--green)')}
+    ${kpi('Kelengkapan Data',fmt(m.progress),'%',m.steps.filter(s=>s.done).length+'/6 modul','var(--leaf)')}
+  </div>
+
+  <div class="grid2" style="margin-top:16px">
+    <div class="card">
+      <h3>Ambang Batas Konsumsi Energi</h3>
+      <p class="cap">Total TOE tahunan vs ambang wajib sektor.</p>
+      <div class="gaugewrap">
+        <svg id="gauge" viewBox="0 0 280 168" width="100%" style="max-width:330px"></svg>
+        <div class="greadout"><div class="num" style="color:${col}">${m.totalGj>0?fmt(m.totalToe,0):'—'}</div><div class="lbl">TOE / tahun</div></div>
+      </div>
+      <div class="sowhat"><span class="tag">SO WHAT</span>${m.totalGj>0?(m.over?`Konsumsi <b>${fmt(m.totalToe,0)} TOE</b> melewati ambang <b>${fmt(m.thr)} TOE</b> — audit energi & manajer energi bersertifikat jadi <b>kewajiban regulasi</b>.`:`Masih <b>${fmt(Math.abs(m.gap),0)} TOE</b> di bawah ambang — belum wajib, cocok sebagai klien <b>early-adopter</b>.`):'Isi data konsumsi energi untuk menghitung status kewajiban.'}</div>
+    </div>
+
+    <div class="card">
+      <h3>Emisi GRK Scope 1 + Scope 2</h3>
+      <p class="cap">Scope 1 = pembakaran langsung · Scope 2 = listrik terbeli.</p>
+      <div class="scoperow">
+        <div class="scopebox"><div class="t"><span class="sw" style="background:var(--s1)"></span>Scope 1</div><div class="n">${fmt(m.scope1,0)}</div><div class="s">tCO₂e · langsung</div></div>
+        <div class="scopebox"><div class="t"><span class="sw" style="background:var(--s2)"></span>Scope 2</div><div class="n">${fmt(m.scope2,0)}</div><div class="s">tCO₂e · listrik</div></div>
+      </div>
+      <div class="stackbar">
+        <span style="width:${m.scope1/et*100}%;background:var(--s1)"></span>
+        <span style="width:${m.scope2/et*100}%;background:var(--s2)"></span>
+      </div>
+      <div class="sowhat"><span class="tag">SO WHAT</span>${m.emisTotal>0?`${m.scope2>=m.scope1?'Scope 2 (listrik) dominan':'Scope 1 (pembakaran langsung) dominan'} — titik ungkit dekarbonisasi ada di ${m.scope2>=m.scope1?'efisiensi listrik + PV/REC':'perbaikan proses & bahan bakar'}.`:'Belum ada data emisi.'}</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Bauran Energi per Sumber</h3>
+    <p class="cap">Konsumsi final dikonversi ke TOE (1 TOE = 41,868 GJ).</p>
+    ${m.src.length?`<div class="src">${m.src.map(s=>`<div class="srcrow">
+      <div class="nm">${s.nm}<small>${fmt(s.qty)} ${s.unit}</small></div>
+      <div class="track"><div class="fill" style="width:${(s.gj/maxSrc*100).toFixed(1)}%;background:${s.color}"></div></div>
+      <div class="val"><b>${fmt(s.toe,0)}</b> TOE</div></div>`).join('')}</div>
+      <div class="legendrow">${m.src.map(s=>`<div class="li"><span class="swatch" style="background:${s.color}"></span>${s.nm} · ${fmt(s.gj/m.totalGj*100,0)}%</div>`).join('')}</div>`
+      :`<p style="color:var(--muted);font-size:13px">Belum ada data — isi konsumsi di modul <b>Pelaksanaan Audit</b>.</p>`}
+  </div>
+
+  <div class="card">
+    <h3>Kelengkapan & Alur Kerja Audit</h3>
+    <p class="cap">Enam langkah terisi otomatis seiring auditor melengkapi tiap modul.</p>
+    <div class="flow">${m.steps.map((s,i)=>`<div class="step"><div class="n">LANGKAH ${i+1}</div><div class="t">${s.t}</div>
+      <span class="pill ${s.done?'p-done':'p-wait'}"><span class="pd"></span>${s.done?'Selesai':'Menunggu'}</span></div>`).join('')}</div>
+  </div>
+
+  <div class="disclaimer"><b>Catatan metode:</b> Konversi 1 TOE = 41,868 GJ. Faktor emisi contoh — listrik 0,2194 tCO₂e/GJ (≈0,79 tCO₂e/MWh grid), solar 0,0744, gas 0,056, batubara 0,0946, LPG 0,063 tCO₂e/GJ. Gunakan faktor emisi yang berlaku untuk pelaporan resmi.</div>`;
+}
+function bindDashboard(c){ const m=metrics(c); drawGauge(m.totalToe,m.thr,m.over); }
+
+function drawGauge(val,thr,over){
+  const svg=$('gauge'); if(!svg)return;
+  const cx=140,cy=150,r=112, has=val>0;
+  const maxScale=Math.max(thr*1.7, val*1.12, 1);
+  const a0=180,a1=0;
+  const ang=v=>(a0-(Math.min(v,maxScale)/maxScale)*(a0-a1))*Math.PI/180;
+  const pt=(deg,rad)=>[cx+rad*Math.cos(deg),cy-rad*Math.sin(deg)];
+  const arc=(v0,v1,rad,w,color)=>{const[x0,y0]=pt(ang(v0),rad),[x1,y1]=pt(ang(v1),rad);const large=(ang(v0)-ang(v1))>Math.PI?1:0;return `<path d="M${x0} ${y0} A${rad} ${rad} 0 ${large} 1 ${x1} ${y1}" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round"/>`;};
+  let h=arc(0,maxScale,r,15,'#DDEEE4');
+  if(has) h+=arc(0,Math.min(val,maxScale),r,15,over?'var(--coral)':'var(--green)');
+  const[tx0,ty0]=pt(ang(thr),r-12),[tx1,ty1]=pt(ang(thr),r+12);
+  h+=`<line x1="${tx0}" y1="${ty0}" x2="${tx1}" y2="${ty1}" stroke="#0E7C54" stroke-width="3"/>`;
+  const[lx,ly]=pt(ang(thr),r+25);
+  h+=`<text x="${lx}" y="${ly}" fill="#0E7C54" font-size="11" font-family="Space Mono, monospace" text-anchor="middle">${fmt(thr)}</text>`;
+  h+=`<text x="${cx}" y="${cy+20}" fill="#93A99D" font-size="10" text-anchor="middle">0 — ${fmt(maxScale,0)} TOE · garis = ambang wajib</text>`;
+  svg.innerHTML=h;
+}
+
+/* ---------- 2. REGULASI ---------- */
+function vRegulasi(){
+  return mhead("Standar / Regulasi","Referensi","Dasar hukum & standar yang mendasari audit energi dan pelaporan emisi. Verifikasi versi terbaru sebelum dipakai.")+`
+  <div class="card">
+    <div class="reglist">${state.regs.map((g,i)=>`<div class="reg"><div class="rc">§</div>
+      <div class="g"><div class="t">${esc(g.t)}</div><div class="r">${esc(g.r)}</div><div class="n">${esc(g.n)}</div></div>
+      <button class="icon-btn" data-del="${i}" title="Hapus">✕</button></div>`).join('')}</div>
+    <div class="formrow" style="margin-top:16px">
+      <div class="field"><label>Nama Standar</label><input id="rgT" placeholder="cth. Sistem Manajemen Mutu"></div>
+      <div class="field"><label>Nomor / Referensi</label><input id="rgR" placeholder="cth. ISO 9001:2015"></div>
+      <div class="field" style="flex:2 1 220px"><label>Catatan Relevansi</label><input id="rgN" placeholder="kenapa relevan"></div>
+      <button class="btn" id="rgAdd">Tambah</button>
+    </div>
+  </div>`;
+}
+function bindRegulasi(){
+  $('main').querySelectorAll('[data-del]').forEach(button=>button.onclick=async()=>{
+    const regs=state.regs.filter((_,i)=>i!==Number(button.dataset.del));
+    if(await saveChange(state,{regs}))render();
+  });
+  $('rgAdd').onclick=async()=>{
+    const t=textValue('rgT'),r=textValue('rgR'),n=textValue('rgN');
+    if(t&&await saveChange(state,{regs:[...state.regs,{t,r,n}]}))render();
+  };
+}
+
+/* ---------- Formulir & lampiran ---------- */
+const requiredMark = '<span class="required" aria-hidden="true">*</span>';
+const formStatus = '<p class="form-status" role="status" aria-live="polite"></p>';
+const money = value => value===null||value===undefined||value===''?'—':'Rp '+fmt(value,Number(value)%1?2:0);
+const decimal = value => fmt(value,Number(value)%1?2:0);
+const fieldLabel = (id,label,required=false) => `<label for="${id}">${label}${required?' '+requiredMark:''}</label>`;
+function inputField(id,label,attributes='',required=false){
+  return `<div class="field">${fieldLabel(id,label,required)}<input id="${id}" ${attributes} ${required?'required':''}></div>`;
+}
+function showStatus(container,message,error=false){
+  const status=container?.querySelector('.form-status');
+  if(status){status.textContent=message;status.classList.toggle('error',error);}
+}
+function validateForm(form){
+  const fields=[...form.elements].filter(el=>el.matches('input, select, textarea'));
+  for(const field of fields){
+    const label=field.labels[0]?.textContent.replace(/\s*\*$/, '').trim()||'Kolom ini';
+    field.setCustomValidity('');
+    if(field.required&&!field.value.trim())field.setCustomValidity('Lengkapi '+label+'.');
+    if(field.validity.valid)continue;
+    showStatus(form,field.validity.customError?field.validationMessage:'Periksa nilai pada '+label+'.',true);
+    field.reportValidity();
+    return false;
+  }
+  return true;
+}
+function bindForm(id,submit){
+  const form=$(id);
+  form.addEventListener('input',event=>{
+    event.target.setCustomValidity?.('');
+    showStatus(form,'');
+  });
+  form.onsubmit=event=>{
+    event.preventDefault();
+    if(validateForm(form))submit(form);
+  };
+}
+function reportStorageError(container,message){
+  if(container?.isConnected&&container.querySelector('.form-status'))showStatus(container,message,true);
+  else workspaceMessage(message,true);
+}
+function workspaceMessage(message,error=false){
+  const status=$('workspaceMessage');
+  status.textContent=message;
+  status.classList.toggle('error',error);
+}
+let saving=false;
+async function saveChange(target,updates,container){
+  if(saving){
+    reportStorageError(container,'Penyimpanan sebelumnya masih berjalan. Coba lagi sebentar.');
+    return false;
+  }
+  saving=true;
+  $('workspaceMessage').textContent='';
+  const next=target===state?{...state,...updates}:{...state,
+    companies:state.companies.map(company=>company===target?{...company,...updates}:company)};
+  try{
+    await store.save(next);
+    Object.assign(target,updates);
+    if(cloud&&target===state)store.saveView();
+    return true;
+  }catch(error){
+    reportStorageError(container,cloud&&error.status?error.message:'Data gagal disimpan. Periksa koneksi atau ruang penyimpanan, lalu coba lagi.');
+    return false;
+  }finally{
+    saving=false;
+  }
+}
+function rerenderStatus(container,id,message){
+  if(container.isConnected){render();showStatus($(id),message);}
+}
+function textValue(id){return $(id).value.trim();}
+function fileLabel(file){
+  if(!file)return '—';
+  if(typeof file==='string')return esc(file);
+  return `<button type="button" class="file-link" data-download="${esc(file.id)}" data-name="${esc(file.name)}">${esc(file.name)}</button>`;
+}
+let attachmentDatabase;
+function attachmentRequest(mode,request){
+  if(!attachmentDatabase){
+    attachmentDatabase=new Promise((resolve,reject)=>{
+      const open=indexedDB.open('smartAuditLive.attachments',1);
+      open.onupgradeneeded=()=>open.result.createObjectStore('files');
+      open.onsuccess=()=>resolve(open.result);
+      open.onerror=()=>reject(open.error);
+      open.onblocked=()=>reject(new Error('Penyimpanan sedang dibuka di tab lain.'));
+    }).catch(error=>{attachmentDatabase=null;throw error;});
+  }
+  return attachmentDatabase.then(db=>new Promise((resolve,reject)=>{
+    const tx=db.transaction('files',mode);
+    const result=request(tx.objectStore('files'));
+    tx.oncomplete=()=>resolve(result.result);
+    tx.onabort=()=>reject(tx.error||new Error('Penyimpanan dibatalkan.'));
+  }));
+}
+function removeAttachment(file){
+  if(!file?.id)return;
+  const request=cloud?cloud.removeFile(file.id):attachmentRequest('readwrite',files=>files.delete(file.id));
+  request.catch(()=>{});
+}
+function downloadBlob(blob,name){
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement('a');
+  link.href=url;
+  link.download=name;
+  link.click();
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
+}
+function bindDownloads(root){
+  root.querySelectorAll('[data-download]').forEach(button=>button.onclick=async()=>{
+    try{
+      const file=await (cloud?cloud.getFile(button.dataset.download):
+        attachmentRequest('readonly',files=>files.get(button.dataset.download)));
+      if(!file)throw new Error('Berkas tidak ditemukan.');
+      downloadBlob(file,button.dataset.name);
+    }catch(error){
+      reportStorageError(button.closest('.card'),cloud&&error.status?error.message:'Berkas gagal dibuka.');
+    }
+  });
+}
+async function saveWithAttachment(container,file,commit,control=container.querySelector('[type="submit"]')){
+  if(control.disabled)return;
+  control.disabled=true;
+  let attachment=null;
+  try{
+    if(file){
+      showStatus(container,'Menyimpan berkas…');
+      attachment={name:file.name,id:cloud?crypto.randomUUID():uid()};
+      if(cloud)await cloud.putFile(attachment.id,file);
+      else await attachmentRequest('readwrite',files=>files.add(file,attachment.id));
+    }
+    if(!container.isConnected||!await commit(attachment))removeAttachment(attachment);
+  }catch(error){
+    removeAttachment(attachment);
+    reportStorageError(container,cloud&&error.status?error.message:'Berkas gagal disimpan. Periksa koneksi atau ruang penyimpanan.');
+  }finally{
+    control.disabled=false;
+  }
+}
+function sectorOptions(selected){
+  return Object.entries(SECTORS).map(([key,sector])=>`<option value="${key}" ${selected===key?'selected':''}>${sector.name} (≥${fmt(sector.thr)} TOE)</option>`).join('');
+}
+
+/* ---------- Cadangan data ---------- */
+const BACKUP_FORMAT='smart-audit-backup-v1';
+const MAX_BACKUP_BYTES=80*1024*1024;
+const MAX_TRANSFER_FILE_BYTES=10*1024*1024;
+function attachmentReferences(companies){
+  const references=[];
+  const stack=[companies];
+  while(stack.length){
+    const owner=stack.pop();
+    for(const [key,value] of Object.entries(owner)){
+      if(!value||typeof value!=='object')continue;
+      if((key==='file'||key==='structureFile')&&typeof value.id==='string'&&typeof value.name==='string'){
+        references.push({owner,key,file:value});
+      }else stack.push(value);
+    }
+  }
+  return references;
+}
+async function fileAsBase64(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>resolve(String(reader.result).split(',')[1]);
+    reader.onerror=()=>reject(new Error('Berkas lokal gagal dibaca.'));
+    reader.readAsDataURL(file);
+  });
+}
+async function exportBackup(){
+  if(!state.companies.length){
+    workspaceMessage('Belum ada klien untuk dicadangkan.',true);
+    return;
+  }
+  const companies=structuredClone(state.companies);
+  const regs=structuredClone(state.regs);
+  const files=new Map();
+  for(const {owner,key,file} of attachmentReferences(companies)){
+    if(!files.has(file.id)){
+      const blob=await (cloud?cloud.getFile(file.id):attachmentRequest('readonly',store=>store.get(file.id)));
+      files.set(file.id,blob?{id:file.id,base64:await fileAsBase64(blob)}:null);
+    }
+    if(!files.get(file.id))owner[key]=file.name;
+  }
+  const data={format:BACKUP_FORMAT,companies,regs,files:[...files.values()].filter(Boolean)};
+  const backup=new Blob([JSON.stringify(data)],{type:'application/json'});
+  downloadBlob(backup,`smart-audit-cadangan-${localArchiveDate()}.json`);
+  workspaceMessage(`Cadangan ${companies.length} klien siap diunduh.`);
+}
+function mergeBackupRegulations(incoming){
+  const key=rule=>JSON.stringify([rule.t,rule.r,rule.n]);
+  const rules=new Map(state.regs.map(rule=>[key(rule),rule]));
+  for(const rule of incoming)if(!rules.has(key(rule)))rules.set(key(rule),rule);
+  return [...rules.values()];
+}
+async function importBackup(file){
+  if(file.size>MAX_BACKUP_BYTES)throw new Error('Cadangan melebihi batas 80 MB.');
+  const data=JSON.parse(await file.text());
+  const items=Array.isArray(data?.companies)&&data.companies;
+  const regulations=Array.isArray(data?.regs)&&data.regs;
+  if(data?.format!==BACKUP_FORMAT||!items||!regulations||!Array.isArray(data.files)||
+     !items.every(company=>typeof company?.id==='string'&&/^[a-zA-Z0-9-]{6,80}$/.test(company.id)&&
+       typeof company.name==='string'&&Object.hasOwn(SECTORS,company.sector))||
+     new Set(items.map(company=>company.id)).size!==items.length||
+     !regulations.every(rule=>rule&&['t','r','n'].every(key=>typeof rule[key]==='string'))||
+     !data.files.every(entry=>typeof entry?.id==='string'&&typeof entry.base64==='string')){
+    throw new Error('Pilih file JSON yang dibuat dari tombol Cadangkan Data di Smart Audit.');
+  }
+  const existing=new Set(state.companies.map(company=>company.id));
+  const companies=items.filter(company=>!existing.has(company.id));
+  companies.forEach(migrateCompany);
+  if(!companies.length&&mergeBackupRegulations(regulations).length===state.regs.length){
+    workspaceMessage('Semua data dari cadangan ini sudah ada di ruang kerja.');
+    return;
+  }
+  const contents=new Map(data.files.map(entry=>[entry.id,entry.base64]));
+  const uploaded=new Map();
+  let saved=false;
+  try{
+    for(const {owner,key,file:attachment} of attachmentReferences(companies)){
+      const encoded=contents.get(attachment.id);
+      if(encoded===undefined)throw new Error(`Berkas ${attachment.name} tidak ditemukan di dalam cadangan.`);
+      if(!uploaded.has(attachment.id)){
+        const binary=atob(encoded);
+        if(binary.length>MAX_TRANSFER_FILE_BYTES)throw new Error(`Berkas ${attachment.name} melebihi batas 10 MB.`);
+        const bytes=new Uint8Array(binary.length);
+        for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+        const id=crypto.randomUUID();
+        uploaded.set(attachment.id,id);
+        await cloud.putFile(id,new Blob([bytes]));
+      }
+      owner[key]={id:uploaded.get(attachment.id),name:attachment.name};
+    }
+    saved=await saveChange(state,{companies:[...state.companies,...companies],regs:mergeBackupRegulations(regulations),
+      currentId:companies[0]?.id||state.currentId,view:'dashboard'});
+    if(saved){
+      render();
+      const skipped=items.length-companies.length;
+      workspaceMessage(`Impor selesai. ${companies.length} klien ditambahkan.${skipped?` ${skipped} klien yang sudah ada dilewati.`:''}`);
+    }
+  }finally{
+    if(!saved)for(const id of uploaded.values())removeAttachment({id});
+  }
+}
+function bindBackup(){
+  const backupButton=document.createElement('button');
+  backupButton.type='button';
+  backupButton.className='btn sec sm';
+  backupButton.textContent='Cadangkan Data';
+  $('btnAdd').after(backupButton);
+  backupButton.onclick=async()=>{
+    backupButton.disabled=true;
+    try{await exportBackup();}catch(error){workspaceMessage(error.message,true);}
+    finally{backupButton.disabled=false;}
+  };
+  if(!cloud)return;
+  const button=backupButton.cloneNode(false);
+  button.textContent='Impor Cadangan';
+  backupButton.after(button);
+  const picker=document.createElement('input');
+  picker.type='file';
+  picker.accept='.json,application/json';
+  picker.hidden=true;
+  button.after(picker);
+  button.onclick=()=>picker.click();
+  picker.onchange=async()=>{
+    const file=picker.files[0];
+    if(!file)return;
+    button.disabled=true;
+    workspaceMessage('Membaca cadangan…');
+    try{await importBackup(file);}
+    catch(error){
+      workspaceMessage(error instanceof SyntaxError?'File cadangan tidak bisa dibaca.':error.message,true);
+    }finally{
+      picker.value='';
+      button.disabled=false;
+    }
+  };
+}
+
+/* ---------- 3. PROFIL PERUSAHAAN ---------- */
+function vProfil(c){
+  return mhead("Profil Perusahaan","Modul 03","Isi identitas perusahaan dan lengkapi struktur manajemen energi.")+`
+  <form class="card" id="profileForm" novalidate>
+    <h3>Identitas Perusahaan</h3>
+    <p class="cap">Semua kolom identitas wajib diisi.</p>
+    <div class="formgrid">
+      ${inputField('pfName','Nama Perusahaan',`value="${esc(c.name)}"`,true)}
+      <div class="field">${fieldLabel('pfSector','Sektor Usaha',true)}<select class="field" id="pfSector" required>${sectorOptions(c.sector)}</select></div>
+      ${inputField('pfHours','Jam Operasi',`value="${esc(c.jamOperasi)}" placeholder="08.00–17.00 (Sen–Jum)"`,true)}
+      <div class="field">${fieldLabel('pfArea','Luas Bangunan (m²)',true)}
+        <input id="pfArea" class="mono" type="number" min="0" step="any" value="${esc(c.area_m2)}" required aria-describedby="areaHelp">
+        <div class="hint" id="areaHelp">Isi 0 jika luas bangunan tidak berlaku untuk objek audit ini.</div>
+      </div>
+    </div>
+    <div class="field" style="margin-top:14px">${fieldLabel('pfDesc','Deskripsi Singkat',true)}
+      <textarea id="pfDesc" required placeholder="Gambaran usaha, lokasi, dan karakteristik konsumsi energi">${esc(c.deskripsi)}</textarea>
+    </div>
+    <div class="form-actions"><button type="submit" class="btn">Simpan Profil</button>${formStatus}</div>
+  </form>
+  <section class="card" id="structurePanel">
+    <h3>Struktur Manajemen Energi</h3>
+    <p class="cap" id="structureHelp">Berkas langsung disimpan setelah dipilih.</p>
+    ${inputField('mgFile','Pilih Berkas','type="file" aria-describedby="structureHelp"')}
+    <div class="form-actions"><span class="attachment-file" id="structureFileLink">${c.structureFile?fileLabel(c.structureFile):''}</span>${formStatus}</div>
+  </section>`;
+}
+function bindProfil(c){
+  bindForm('profileForm',async form=>{
+    if(await saveChange(c,{name:textValue('pfName'),sector:$('pfSector').value,
+      jamOperasi:textValue('pfHours'),area_m2:Number($('pfArea').value),deskripsi:textValue('pfDesc')},form)){
+      renderCompanySel();
+      showStatus(form,'Profil berhasil disimpan.');
+    }
+  });
+  const panel=$('structurePanel');
+  const picker=$('mgFile');
+  picker.onchange=async()=>{
+    const file=picker.files[0];
+    if(!file)return;
+    await saveWithAttachment(panel,file,async attachment=>{
+      const previous=c.structureFile;
+      if(!await saveChange(c,{structureFile:attachment},panel))return false;
+      if(!Object.values(c.auditYears).some(record=>record.profile.structureFile?.id===previous?.id)){
+        removeAttachment(previous);
+      }
+      panel.querySelector('#structureFileLink').innerHTML=fileLabel(attachment);
+      bindDownloads(panel);
+      showStatus(panel,'Berkas struktur tersimpan.');
+      return true;
+    },picker);
+    picker.value='';
+  };
+}
+
+/* ---------- 4. PENGHARGAAN ---------- */
+function vPenghargaan(c){
+  return mhead("Penghargaan","Modul 04","Arsip sertifikat dan penghargaan terkait energi atau lingkungan.")+`
+  <div class="card">
+    <div class="rowlist">${c.certs.map((x,i)=>`<div class="rowitem"><div class="g">
+      <div class="t">${esc(x.name)}</div><div class="s">${esc(x.type||'Sertifikat/Penghargaan')} · ${esc(x.issuer||'—')} · ${esc(x.year||'—')}
+      ${x.no?` · No. ${esc(x.no)}`:''}${x.file?` · ${fileLabel(x.file)}`:''}</div></div>
+      <button type="button" class="btn sec sm" data-delc="${i}">Hapus</button></div>`).join('')||
+      '<p class="cap">Belum ada sertifikat atau penghargaan.</p>'}</div>
+    <form id="awardForm" class="subform" novalidate>
+      <p class="cap">Semua kolom wajib diisi, termasuk berkas.</p>
+      <div class="formgrid three">
+        <div class="field">${fieldLabel('ctType','Jenis',true)}<select class="field" id="ctType" required><option>Sertifikat</option><option>Penghargaan</option></select></div>
+        ${inputField('ctName','Nama Sertifikat/Penghargaan','placeholder="ISO 14001 atau PROPER Hijau"',true)}
+        ${inputField('ctNo','No. Sertifikat','',true)}
+        ${inputField('ctIss','Penerbit','placeholder="KLHK"',true)}
+        ${inputField('ctYear','Tahun','type="number" min="1900" max="9999" placeholder="2026"',true)}
+        ${inputField('ctFile','Berkas','type="file"',true)}
+      </div>
+      <div class="form-actions"><button type="submit" class="btn">Tambah</button>${formStatus}</div>
+    </form>
+  </div>`;
+}
+function bindPenghargaan(c){
+  const form=$('awardForm');
+  $('ctType').onchange=()=>{
+    const type=$('ctType').value;
+    $('ctNo').labels[0].innerHTML='No. '+type+' '+requiredMark;
+  };
+  $('main').querySelectorAll('[data-delc]').forEach(button=>button.onclick=async()=>{
+    const index=Number(button.dataset.delc);
+    const file=c.certs[index].file;
+    if(!await saveChange(c,{certs:c.certs.filter((_,i)=>i!==index)},form))return;
+    if(!Object.values(c.auditYears).some(record=>record.profile.certs.some(cert=>cert.file?.id===file?.id))){
+      removeAttachment(file);
+    }
+    rerenderStatus(form,'awardForm','Data dihapus.');
+  });
+  bindForm('awardForm',form=>{
+    const entry={type:$('ctType').value,name:textValue('ctName'),no:textValue('ctNo'),
+      issuer:textValue('ctIss'),year:$('ctYear').value};
+    saveWithAttachment(form,$('ctFile').files[0],async file=>{
+      if(!await saveChange(c,{certs:[...c.certs,{...entry,file}]},form))return false;
+      rerenderStatus(form,'awardForm','Data dan berkas berhasil disimpan.');
+      return true;
+    });
+  });
+}
+
+/* ---------- 5. KUALIFIKASI ---------- */
+const QUALIFICATION_ROLES=['Manajer Energi','Auditor Energi'];
+function vKualifikasi(c){
+  return mhead("Kualifikasi","Modul 05","Catat dan perbarui sertifikat kompetensi personil.")+`
+  <div class="card">
+    <div class="table-wrap"><table><thead><tr><th>Nama Personil</th><th>Peran</th><th>No. Sertifikat</th><th>Masa Berlaku</th><th>Tindakan</th></tr></thead>
+    <tbody>${c.qualif.map((q,i)=>`<tr><td>${esc(q.name||'—')}</td><td>${esc(q.role)}</td><td>${esc(q.no||'—')}</td><td>${esc(q.valid||'—')}</td>
+    <td><div class="row-actions"><button type="button" class="btn sec sm" data-editq="${i}">Update</button>
+    <button type="button" class="btn sec sm" data-delq="${i}">Hapus</button></div></td></tr>`).join('')||
+    '<tr><td colspan="5">Belum ada personil bersertifikat.</td></tr>'}</tbody></table></div>
+    <form class="subform" id="qualForm" novalidate>
+      <div class="formgrid">
+        ${inputField('qlName','Nama Personil','',true)}
+        <div class="field">${fieldLabel('qlRole','Peran',true)}<select class="field" id="qlRole" required><option value="">Pilih peran</option>${QUALIFICATION_ROLES.map(role=>`<option>${role}</option>`).join('')}</select></div>
+        ${inputField('qlNo','No. Sertifikat','placeholder="BNSP-..."',true)}
+        ${inputField('qlVal','Masa Berlaku','placeholder="Tanggal atau tahun berakhir"',true)}
+      </div>
+      <div class="form-actions"><button type="submit" class="btn" id="qlAdd">Tambah</button>
+        <button type="button" class="btn sec" id="qlCancel" hidden>Batal Update</button>${formStatus}</div>
+    </form>
+  </div>`;
+}
+function bindKualifikasi(c){
+  let editing=null;
+  const form=$('qualForm');
+  const reset=()=>{
+    editing=null;
+    form.reset();
+    $('qlAdd').textContent='Tambah';
+    $('qlCancel').hidden=true;
+    showStatus(form,'');
+  };
+  $('qlCancel').onclick=reset;
+  $('main').querySelectorAll('[data-editq]').forEach(button=>button.onclick=()=>{
+    editing=Number(button.dataset.editq);
+    const record=c.qualif[editing];
+    $('qlName').value=record.name;
+    $('qlRole').value=record.role;
+    $('qlNo').value=record.no||'';
+    $('qlVal').value=record.valid||'';
+    $('qlAdd').textContent='Simpan Update';
+    $('qlCancel').hidden=false;
+    $('qlName').focus();
+    showStatus(form,'');
+  });
+  $('main').querySelectorAll('[data-delq]').forEach(button=>button.onclick=async()=>{
+    if(await saveChange(c,{qualif:c.qualif.filter((_,i)=>i!==Number(button.dataset.delq))},form)){
+      rerenderStatus(form,'qualForm','Kualifikasi dihapus.');
+    }
+  });
+  bindForm('qualForm',async form=>{
+    const record={name:textValue('qlName'),role:$('qlRole').value,no:textValue('qlNo'),valid:textValue('qlVal')};
+    const qualif=[...c.qualif];
+    if(editing===null)qualif.push(record);
+    else qualif[editing]=record;
+    if(await saveChange(c,{qualif},form)){
+      rerenderStatus(form,'qualForm',editing===null?'Kualifikasi ditambahkan.':'Kualifikasi diperbarui.');
+    }
+  });
+}
+
+/* ---------- 6. PELAKSANAAN AUDIT ---------- */
+const auditDrafts=new WeakMap();
+const emptyTravelRow=()=>({mode:'',distance:'',count:'',fuel:''});
+const travelDistance=row=>Number(row.distance)*Number(row.count);
+function travelTotals(travel){
+  const rows=[...travel.business,...travel.commuting];
+  const fuel=rows.filter(row=>row.fuel!==''&&row.fuel!=null);
+  return {count:rows.reduce((total,row)=>total+Number(row.count),0),
+    distance:rows.reduce((total,row)=>total+travelDistance(row),0),
+    fuel:fuel.length?fuel.reduce((total,row)=>total+Number(row.fuel),0):null};
+}
+function hasTravel(row){return Object.values(row).some(value=>String(value??'').trim()!=='');}
+function travelRow(row=emptyTravelRow()){
+  const id=uid();
+  return `<div data-travel-row class="subform">
+    <div class="formgrid">
+      ${inputField(id+'Mode','Moda Transportasi',`data-trip="mode" value="${esc(row.mode)}" placeholder="Mobil, motor, kereta, atau pesawat"`)}
+      ${inputField(id+'Distance','Jarak per Perjalanan (km)',`data-trip="distance" type="number" min="0" step="any" value="${esc(row.distance)}"`)}
+      ${inputField(id+'Count','Jumlah Perjalanan per Tahun',`data-trip="count" type="number" min="1" step="1" value="${esc(row.count)}"`)}
+      ${inputField(id+'Fuel','BBM Tercatat (liter/tahun)',`data-trip="fuel" type="number" min="0" step="any" value="${esc(row.fuel)}" placeholder="Opsional"`)}
+    </div>
+    <div class="form-actions"><button type="button" class="btn sec sm" data-remove-travel>Hapus Baris</button></div>
+  </div>`;
+}
+function vAudit(c){
+  const undatedLegacy=hasLegacyAudit(c);
+  const activeLegacy=c.auditYears[c.auditYear]?.legacy;
+  const draft=auditDrafts.get(c)||{year:c.auditYear||(undatedLegacy?'':localYear()),
+    audit:c.audit,consumption:c.consumption,travel:c.travel};
+  const years=Object.keys(c.auditYears).sort((a,b)=>Number(b)-Number(a));
+  const readOnlyYear=c.auditYear&&!activeLegacy?'readonly':'';
+  return mhead("Pelaksanaan Audit","Modul 06","Simpan konsumsi energi dan kegiatan transportasi menurut periode audit.")+`
+  <section class="card">
+    <h3>Rekap Audit Tahunan</h3>
+    <p class="cap">Buka data untuk mengeditnya atau lihat laporan siap cetak untuk tiap tahun yang sudah disimpan.</p>
+    <div class="rowlist">${years.map(year=>{
+      const record=c.auditYears[year];
+      const m=metrics({...record.profile,...record,auditYear:year});
+      return `<div class="rowitem"><div class="g"><div class="t">${esc(year)}${c.auditYear===year?' · Dibuka':''}</div>
+        <div class="s">${esc(SECTORS[record.profile.sector]?.name||'')} · ${decimal(m.totalToe)} TOE · ${record.recs.length} rekomendasi</div></div>
+        <div class="row-actions">
+          <button type="button" class="btn sec sm" data-audit-open="${esc(year)}">${c.auditYear===year?'Edit Data':'Buka'}</button>
+          <button type="button" class="btn sec sm" data-audit-report="${esc(year)}">Lihat PDF</button>
+        </div></div>`;
+    }).join('')||(undatedLegacy?'<p class="cap">Data audit lama ditemukan. Masukkan Tahun Audit di bawah untuk membuka pratinjaunya.</p>':
+      '<p class="cap">Belum ada rekap tahunan. Simpan data audit untuk membuat rekap pertama.</p>')}</div>
+    ${c.auditYear?`<div class="form-actions"><button type="button" class="btn sec" id="newAudit">${c.pendingAudit?'Buka Draf Tahun Baru':'Mulai Tahun Baru'}</button></div>`:''}
+  </section>
+  <form id="auditForm" novalidate>
+    <section class="card">
+      <h3>Detail Pelaksanaan</h3>
+      <p class="cap">Tahun audit adalah periode yang direkap. Tanggal pelaksanaan dapat berbeda dari tahun data.</p>
+      ${activeLegacy?'<p class="cap">Tahun awal untuk data lama diambil dari tanggal pelaksanaan. Ubah jika periode datanya berbeda.</p>':''}
+      <div class="formgrid">
+        ${inputField('auditYear','Tahun Audit',`type="number" min="1900" max="9999" step="1" value="${esc(draft.year)}" ${readOnlyYear}`,true)}
+        ${inputField('auditDate','Tanggal Pelaksanaan',`type="date" value="${esc(draft.audit.tanggal)}"`)}
+        ${inputField('auditScope','Ruang Lingkup',`value="${esc(draft.audit.lingkup)}" placeholder="Seluruh gedung dan utilitas"`)}
+        ${inputField('auditMethod','Metode Audit',`value="${esc(draft.audit.metode)}" placeholder="Walkthrough dan pengukuran"`)}
+      </div>
+      ${undatedLegacy?'<div class="form-actions"><button type="button" class="btn sec" id="previewLegacy">Lihat PDF Data Lama</button></div>':''}
+    </section>
+    <section class="card">
+      <h3>Data Konsumsi Energi per Sumber</h3>
+      <p class="cap">Listrik dan solar wajib diisi. Masukkan 0 jika sumber tersebut tidak digunakan.</p>
+      <div class="formgrid three">
+        ${carriersFor(c.sector).map(cr=>inputField(cr.key,`${cr.nm} (${cr.unit}/tahun)`,
+          `class="mono" type="number" min="0" step="any" data-cons value="${esc(draft.consumption[cr.key])}"`,
+          REQUIRED_CARRIERS.includes(cr.key))).join('')}
+      </div>
+    </section>
+    <section class="card">
+      <h3>Data Konsumsi Energi Scope 1 + Scope 2</h3>
+      <p class="cap">Ringkasan dihitung dari konsumsi tahunan per sumber.</p>
+      <div class="formgrid">
+        <div class="calcout">
+          <div class="row"><span class="lab">Total Energi</span><span class="out" id="oGj"></span></div>
+          <div class="row"><span class="lab">Setara TOE</span><span class="out" id="oToe"></span></div>
+          <div class="row"><span class="lab">Intensitas (IKE)</span><span class="out" id="oIke"></span></div>
+        </div>
+        <div class="calcout">
+          <div class="row"><span class="lab">Emisi Scope 1</span><span class="out" id="oS1"></span></div>
+          <div class="row"><span class="lab">Emisi Scope 2</span><span class="out" id="oS2"></span></div>
+          <div class="row"><span class="lab">Emisi Scope 1 + 2</span><span class="out" id="oEmis"></span></div>
+        </div>
+      </div>
+      <p class="savehint" id="oStat"></p>
+    </section>
+    <section class="card">
+      <h3>Data Konsumsi Energi Scope 3</h3>
+      <p class="cap">Catat aktivitas transportasi per moda. Jarak per perjalanan dikalikan dengan jumlah perjalanan selama tahun audit.</p>
+      <div class="formgrid">
+        ${Object.entries(TRAVEL_CATEGORIES).map(([key,label])=>`<fieldset class="travel-group">
+          <legend>${label}</legend>
+          <div data-travel-group="${key}">${draft.travel[key].length?draft.travel[key].map(row=>travelRow(row)).join(''):travelRow()}</div>
+          <div class="form-actions"><button type="button" class="btn sec sm" data-add-travel="${key}">Tambah Moda</button></div>
+        </fieldset>`).join('')}
+      </div>
+      <div class="calcout" style="margin-top:14px">
+        <div class="row"><span class="lab">Total Perjalanan</span><span class="out" id="travelCount"></span></div>
+        <div class="row"><span class="lab">Total Jarak</span><span class="out" id="travelDistance"></span></div>
+        <div class="row"><span class="lab">Total BBM Tercatat</span><span class="out" id="travelFuel"></span></div>
+      </div>
+      <div class="field" style="margin-top:14px">${fieldLabel('travelNotes','Catatan / Sumber Data')}
+        <textarea id="travelNotes" placeholder="Opsional. Contoh: klaim perjalanan dinas atau survei perjalanan karyawan.">${esc(draft.travel.notes)}</textarea>
+      </div>
+      <div class="savebar"><button type="submit" class="btn">Simpan Data Audit</button>${formStatus}</div>
+    </section>
+  </form>`;
+}
+function bindAudit(c){
+  const form=$('auditForm');
+  const readDraft=()=>{
+    const consumption=Object.fromEntries([...form.querySelectorAll('[data-cons]')].map(input=>[
+      input.id,input.value===''?'':Number(input.value)
+    ]));
+    const travel={notes:textValue('travelNotes')};
+    for(const key of Object.keys(TRAVEL_CATEGORIES)){
+      travel[key]=[...form.querySelectorAll(`[data-travel-group="${key}"] [data-travel-row]`)].map(row=>{
+        const inputs=[...row.querySelectorAll('[data-trip]')];
+        const data=Object.fromEntries(inputs.map(input=>[input.dataset.trip,input.value.trim()]));
+        const filled=hasTravel(data);
+        for(const input of inputs)input.required=filled&&input.dataset.trip!=='fuel';
+        return data;
+      });
+    }
+    return {year:$('auditYear').value,audit:{tanggal:$('auditDate').value,lingkup:textValue('auditScope'),
+      metode:textValue('auditMethod')},consumption,travel};
+  };
+  const refresh=()=>{
+    const draft=readDraft();
+    auditDrafts.set(c,draft);
+    const m=metrics({...c,consumption:draft.consumption});
+    $('oGj').textContent=decimal(m.totalGj)+' GJ';
+    $('oToe').textContent=decimal(m.totalToe)+' TOE';
+    $('oIke').textContent=m.ike>0?decimal(m.ike)+' kWh/m²':'—';
+    $('oS1').textContent=decimal(m.scope1)+' tCO₂e';
+    $('oS2').textContent=decimal(m.scope2)+' tCO₂e';
+    $('oEmis').textContent=decimal(m.emisTotal)+' tCO₂e';
+    const status=REQUIRED_CARRIERS.every(key=>hasConsumption(draft.consumption,key))?
+      (m.over?'Wajib Audit':'Di bawah ambang'):'Menunggu data listrik dan solar';
+    $('oStat').textContent=`Ambang sektor ${fmt(m.thr)} TOE · ${status}`;
+    const completed={};
+    for(const key of Object.keys(TRAVEL_CATEGORIES)){
+      completed[key]=draft.travel[key].filter(row=>row.mode&&row.distance!==''&&row.count!==''&&
+        Number(row.distance)>=0&&Number.isInteger(Number(row.count))&&Number(row.count)>0);
+    }
+    const totals=travelTotals(completed);
+    $('travelCount').textContent=fmt(totals.count)+' perjalanan';
+    $('travelDistance').textContent=decimal(totals.distance)+' km';
+    $('travelFuel').textContent=totals.fuel===null?'—':decimal(totals.fuel)+' liter';
+  };
+  form.oninput=refresh;
+  form.onclick=event=>{
+    const add=event.target.closest('[data-add-travel]');
+    const remove=event.target.closest('[data-remove-travel]');
+    if(add){
+      const group=form.querySelector(`[data-travel-group="${add.dataset.addTravel}"]`);
+      group.insertAdjacentHTML('beforeend',travelRow());
+      group.lastElementChild.querySelector('input').focus();
+    }else if(remove){
+      const row=remove.closest('[data-travel-row]');
+      const group=row.parentElement;
+      row.remove();
+      if(!group.children.length)group.innerHTML=travelRow();
+    }else return;
+    refresh();
+  };
+  bindForm('auditForm',async form=>{
+    const {year:enteredYear,audit,consumption,travel}=readDraft();
+    const year=String(Number(enteredYear));
+    if(year!==c.auditYear&&Object.hasOwn(c.auditYears,year)){
+      showStatus(form,'Rekap tahun ini sudah ada. Pilih Buka pada rekap tersebut untuk mengubah datanya.',true);
+      return;
+    }
+    for(const key of Object.keys(TRAVEL_CATEGORIES)){
+      travel[key]=travel[key].filter(hasTravel).map(row=>({mode:row.mode,distance:Number(row.distance),
+        count:Number(row.count),fuel:row.fuel===''?null:Number(row.fuel)}));
+    }
+    const record=annualRecord(c,{audit,consumption,travel,recs:c.recs,savings_pct:c.savings_pct});
+    const auditYears={...c.auditYears,[year]:record};
+    if(c.auditYears[c.auditYear]?.legacy&&year!==c.auditYear)delete auditYears[c.auditYear];
+    if(await saveChange(c,{auditYear:year,auditYears,audit,consumption,travel},form)){
+      auditDrafts.delete(c);
+      rerenderStatus(form,'auditForm',`Rekap tahun ${year} berhasil disimpan.`);
+    }
+  });
+  const openYear=async year=>{
+    if(year===c.auditYear&&year){
+      $('auditDate').focus();
+      return;
+    }
+    const record=year?c.auditYears[year]:c.pendingAudit||
+      {audit:blankAudit(),consumption:{},travel:blankTravel(),recs:[],savings_pct:0};
+    const pendingAudit=c.auditYear?(year?c.pendingAudit:null):
+      {audit:c.audit,consumption:c.consumption,travel:c.travel,recs:c.recs,savings_pct:c.savings_pct};
+    const {audit,consumption,travel,recs,savings_pct}=record;
+    if(await saveChange(c,{auditYear:year,audit,consumption,travel,recs,savings_pct,pendingAudit},form)){
+      auditDrafts.delete(c);
+      if(!form.isConnected)return;
+      render();
+      $('auditYear')?.focus();
+    }
+  };
+  $('main').querySelectorAll('[data-audit-open]').forEach(button=>button.onclick=()=>openYear(button.dataset.auditOpen));
+  $('main').querySelectorAll('[data-audit-report]').forEach(button=>button.onclick=()=>{
+    const year=button.dataset.auditReport;
+    openAnnualReport(year,c.auditYears[year]);
+  });
+  if($('newAudit'))$('newAudit').onclick=()=>openYear('');
+  if($('previewLegacy'))$('previewLegacy').onclick=()=>{
+    const input=$('auditYear');
+    if(input.reportValidity())openAnnualReport(String(Number(input.value)),legacyAuditRecord(c));
+  };
+  refresh();
+}
+
+/* ---------- 7. HASIL AUDIT ---------- */
+const recommendationName=rec=>rec.program||rec.title||'—';
+function resultUpdates(c,values){
+  if(!c.auditYear)return values;
+  const record={...c.auditYears[c.auditYear],...values};
+  return {...values,auditYears:{...c.auditYears,[c.auditYear]:record}};
+}
+function vHasil(c){
+  const total=c.recs.reduce((sum,rec)=>sum+(Number(rec.save)||0),0);
+  return mhead("Hasil Audit","Modul 07",c.auditYear?`Rekomendasi periode audit ${esc(c.auditYear)}.`:
+    'Rekomendasi akan masuk ke rekap saat data audit tahunan disimpan.')+`
+  <section class="card">
+    <h3>Peluang/Rekomendasi</h3>
+    <form id="resultForm" style="margin-top:12px" novalidate>
+      <div class="formgrid">
+        ${inputField('rcProgram','Nama Program','placeholder="Retrofit chiller"',true)}
+        ${inputField('rcRecommendation','Nilai Rekomendasi (Rp)','type="number" min="0" step="0.01" placeholder="Estimasi biaya program"',true)}
+        ${inputField('rcSavings','Nilai Penghematan (Rp/tahun)','type="number" min="0" step="0.01" placeholder="Estimasi penghematan tahunan"',true)}
+        ${inputField('rcFile','Unggah Berkas','type="file"')}
+      </div>
+      <div class="form-actions"><button type="submit" class="btn">Tambah Rekomendasi</button>${formStatus}</div>
+    </form>
+  </section>
+  <section class="card">
+    <h3>Daftar Rekomendasi</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Nama Program</th><th>Nilai Rekomendasi</th><th>Nilai Penghematan / Tahun</th><th>Berkas</th><th>Tindakan</th></tr></thead>
+      <tbody>${c.recs.map((r,i)=>`<tr><td>${esc(recommendationName(r))}</td><td>${money(r.recommendation)}</td>
+        <td>${money(r.save)}</td><td>${fileLabel(r.file)}</td><td><button type="button" class="btn sec sm" data-delr="${i}">Hapus</button></td></tr>`).join('')||
+        '<tr><td colspan="5">Belum ada rekomendasi.</td></tr>'}</tbody>
+    </table></div>
+    <div class="calcout" style="margin-top:14px"><div class="row"><span class="lab">Total Penghematan Tahunan</span><span class="out">${money(total)}</span></div></div>
+    <form id="resultSummary" class="subform" novalidate>
+      ${inputField('resultPercent','Potensi Penghematan Total (%)',`type="number" min="0" max="100" step="any" value="${esc(c.savings_pct??0)}"`,true)}
+      <div class="form-actions"><button type="submit" class="btn sec">Simpan Persentase</button>${formStatus}</div>
+    </form>
+  </section>`;
+}
+function bindHasil(c){
+  const form=$('resultForm');
+  bindForm('resultForm',form=>{
+    const rec={program:textValue('rcProgram'),recommendation:Number($('rcRecommendation').value),
+      save:Number($('rcSavings').value)};
+    saveWithAttachment(form,$('rcFile').files[0],async file=>{
+      if(!await saveChange(c,resultUpdates(c,{recs:[...c.recs,{...rec,file}]}),form))return false;
+      rerenderStatus(form,'resultForm','Rekomendasi berhasil disimpan.');
+      return true;
+    });
+  });
+  $('main').querySelectorAll('[data-delr]').forEach(button=>button.onclick=async()=>{
+    const index=Number(button.dataset.delr);
+    const file=c.recs[index].file;
+    if(await saveChange(c,resultUpdates(c,{recs:c.recs.filter((_,i)=>i!==index)}),form)){
+      removeAttachment(file);
+      rerenderStatus(form,'resultForm','Rekomendasi dihapus.');
+    }
+  });
+  bindForm('resultSummary',async form=>{
+    if(await saveChange(c,resultUpdates(c,{savings_pct:Number($('resultPercent').value)}),form)){
+      showStatus(form,'Persentase berhasil disimpan.');
+    }
+  });
+}
+
+/* ---------- Rekap audit siap cetak ---------- */
+const attachmentName=file=>typeof file==='string'?file:file?.name;
+const reportValue=value=>value===null||value===undefined||value===''?'—':String(value);
+function reportTable(headers,rows){
+  return `<table><thead><tr>${headers.map(value=>`<th scope="col">${esc(value)}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map(row=>`<tr>${row.map(value=>`<td>${esc(reportValue(value))}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+}
+function reportSection(title,headers,rows,summary=''){
+  return `<section><h3>${esc(title)}</h3>${summary?`<p class="report-note report-lead">${esc(summary)}</p>`:''}
+    ${rows.length?reportTable(headers,rows):'<p class="report-note">Belum ada data tercatat.</p>'}</section>`;
+}
+function reportDate(date){
+  const parsed=new Date(date+'T00:00:00Z');
+  return Number.isNaN(parsed.valueOf())?'—':new Intl.DateTimeFormat('id-ID',{dateStyle:'long',timeZone:'UTC'}).format(parsed);
+}
+function renderAnnualReport(year,record){
+  const {profile,audit,travel,recs}=record;
+  const m=metrics({...profile,...record,auditYear:year});
+  const kpis=[
+    ['Energi Scope 1 + 2',decimal(m.totalToe)+' TOE',decimal(m.totalGj)+' GJ'],
+    ['Emisi Scope 1 + 2',decimal(m.emisTotal)+' tCO₂e','Total emisi tahunan'],
+    ['Estimasi Penghematan',money(m.savedRp),recs.length+' rekomendasi per tahun']
+  ];
+  const energy=carriersFor(profile.sector).map(carrier=>{
+    const recorded=hasConsumption(record.consumption,carrier.key);
+    const amount=Number(record.consumption[carrier.key]);
+    const gj=amount*carrier.gj;
+    return [carrier.nm,carrier.scope,recorded?decimal(amount)+' '+carrier.unit:'—',
+      recorded?decimal(gj):'—',recorded?decimal(gj/TOE_GJ):'—',recorded?decimal(gj*carrier.ef):'—'];
+  });
+  const travelRows=Object.entries(TRAVEL_CATEGORIES).flatMap(([key,label])=>
+    travel[key].map(row=>[label,row.mode,fmt(row.count),decimal(row.distance),
+      decimal(travelDistance(row)),row.fuel==null?'—':decimal(row.fuel)]));
+  const totals=travelTotals(travel);
+  if(travelRows.length)travelRows.push(['Total tercatat','',fmt(totals.count),'',decimal(totals.distance),
+    totals.fuel===null?'—':decimal(totals.fuel)]);
+  const recommendationRows=recs.map(rec=>[recommendationName(rec),money(rec.recommendation),money(rec.save),attachmentName(rec.file)]);
+  const documents=profile.docs.map(doc=>[doc.name,doc.type,doc.date]);
+  if(profile.structureFile)documents.unshift([attachmentName(profile.structureFile),'Struktur Manajemen Energi','']);
+  return `<header class="report-mast">
+      <p class="report-brand">Smart Audit Live · Low Carbon Energy Audit</p>
+      <h2 id="reportTitle">Rekap Audit Energi ${esc(year)}</h2>
+      <p><strong>${esc(profile.name)}</strong> · ${esc(SECTORS[profile.sector]?.name||'')}</p>
+    </header>
+    ${record.legacy&&!REQUIRED_CARRIERS.every(key=>hasConsumption(record.consumption,key))?
+      '<p class="report-note report-notice">Rekap data lama. Listrik atau solar belum tercatat lengkap. Total dihitung dari data yang tersedia.</p>':''}
+    <div class="report-kpis">${kpis.map(([label,value,note])=>`<div class="report-kpi"><small>${esc(label)}</small>
+      <strong>${esc(value)}</strong><small>${esc(note)}</small></div>`).join('')}</div>
+    ${reportSection('Profil dan Pelaksanaan',['Informasi','Rincian'],[
+      ['Tanggal Pelaksanaan',reportDate(audit.tanggal)],['Ruang Lingkup',audit.lingkup],['Metode Audit',audit.metode],
+      ['Jam Operasi',profile.jamOperasi],['Luas Bangunan',profile.area_m2===0?'Tidak berlaku':profile.area_m2>0?decimal(profile.area_m2)+' m²':'—'],
+      ['Deskripsi Perusahaan',profile.deskripsi],
+      ['Ambang Konsumsi Sektor',fmt(m.thr)+' TOE/tahun · '+(m.over?'Wajib Audit':'Di bawah ambang')],
+      ['Intensitas (IKE)',m.ike>0?decimal(m.ike)+' kWh/m²/tahun':'—']
+    ])}
+    ${reportSection('Data Konsumsi Energi Scope 1 + Scope 2',['Sumber','Scope','Konsumsi/Tahun','GJ','TOE','tCO₂e'],energy)}
+    <p class="report-note">Emisi Scope 1 ${decimal(m.scope1)} tCO₂e · Emisi Scope 2 ${decimal(m.scope2)} tCO₂e.</p>
+    ${reportSection('Data Konsumsi Energi Scope 3',['Aktivitas','Moda','Perjalanan','km/Perjalanan','Total km','BBM (L)'],travelRows)}
+    ${travel.notes?`<p class="report-note"><strong>Catatan / sumber data</strong> ${esc(travel.notes)}</p>`:''}
+    ${reportSection('Peluang/Rekomendasi',['Nama Program','Nilai Rekomendasi','Penghematan/Tahun','Berkas'],recommendationRows,
+      recs.length?`Total penghematan ${money(m.savedRp)} per tahun · Potensi penghematan ${decimal(record.savings_pct)}%.`:'')}
+    ${reportSection('Struktur Manajemen Energi',['Nama Personil','Peran','Sertifikat'],profile.managers.map(person=>[person.name,person.role,person.cert]))}
+    ${reportSection('Kualifikasi Personil',['Nama Personil','Peran','No. Sertifikat','Masa Berlaku'],profile.qualif.map(person=>[person.name,person.role,person.no,person.valid]))}
+    ${reportSection('Sertifikat dan Penghargaan',['Nama','Nomor','Penerbit','Tahun','Berkas'],profile.certs.map(item=>[item.name,item.no,item.issuer,item.year,attachmentName(item.file)]))}
+    ${reportSection('Dokumen Pendukung',['Berkas','Jenis','Tanggal Arsip'],documents)}
+    <section><h3>Catatan Perhitungan</h3>
+      <p class="report-note">1 TOE = 41,868 GJ. Estimasi emisi Scope 1 dan 2 memakai faktor bawaan aplikasi (tCO₂e/GJ): ${carriersFor(profile.sector).map(cr=>cr.nm+' '+fmt(cr.ef,4)).join(', ')}.
+        Data Scope 3 merangkum aktivitas perjalanan dan BBM yang tercatat. Tanda pisah menunjukkan data yang belum tersedia.</p>
+    </section>`;
+}
+function openAnnualReport(year,record){
+  openPrintReport(renderAnnualReport(year,record),`Rekap Audit Energi ${year}`,record.profile.name);
+}
+function openPrintReport(contents,title,companyName){
+  const dialog=$('annualReport');
+  $('reportContent').innerHTML=contents;
+  $('printReport').onclick=()=>{
+    const previousTitle=document.title;
+    document.title=`${title} - ${companyName}`.replace(/[\\/:*?"<>|]/g,' ').trim();
+    try{window.print();}finally{document.title=previousTitle;}
+  };
+  dialog.showModal();
+}
+
+/* ---------- 8. DOKUMEN ---------- */
+const DOCUMENT_TYPES=['Excel Data Konsumsi','Laporan Audit Energi','Lampiran Lain'];
+const documentSelections=new WeakMap();
+function documentYear(doc){
+  const year=String(doc.year??'');
+  return /^\d{4}$/.test(year)?year:(/^(\d{4})-/.exec(doc.date)?.[1]||'');
+}
+function selectedDocumentYear(c){
+  const years=c.docs.map(documentYear).sort((a,b)=>Number(b)-Number(a));
+  return documentSelections.get(c)??years[0]??(c.auditYear||localYear());
+}
+function localArchiveDate(){
+  const now=new Date();
+  return [now.getFullYear(),now.getMonth()+1,now.getDate()].map(value=>String(value).padStart(2,'0')).join('-');
+}
+function documentsForYear(c,year){
+  return c.docs.flatMap((doc,index)=>documentYear(doc)===year?[{doc,index}]:[]);
+}
+function renderDocumentArchive(c,year){
+  const entries=documentsForYear(c,year);
+  const years=[...new Set([year,localYear(),...c.docs.map(documentYear)])].sort((a,b)=>Number(b)-Number(a));
+  return `<h3>Dokumen per Tahun</h3>
+    <div class="formrow form-actions">
+      <div class="field">${fieldLabel('dcFilter','Tahun yang Ditampilkan')}
+        <select class="field" id="dcFilter">${years.map(value=>`<option value="${esc(value)}" ${value===year?'selected':''}>${esc(value||'Tanpa Tahun')}</option>`).join('')}</select>
+      </div>
+      <button type="button" class="btn sec" id="dcPrint" ${entries.length?'':'disabled'}>Cetak PDF</button>
+    </div>
+    <div class="rowlist" style="margin-top:14px">${entries.map(({doc,index})=>`<div class="rowitem">
+      <div class="g"><div class="t">${fileLabel(doc.file||doc.name)}</div>
+      <div class="s">${esc(doc.type)} · ${esc(reportDate(doc.date))}</div></div>
+      <button type="button" class="btn sec sm" data-deld="${index}">Hapus</button>
+    </div>`).join('')||'<p class="cap">Belum ada dokumen untuk pilihan tahun ini.</p>'}</div>
+    ${formStatus}`;
+}
+function openDocumentsReport(c,year,entries){
+  const title=year?`Daftar Dokumen Tahun ${year}`:'Daftar Dokumen Tanpa Tahun';
+  const contents=`<header class="report-mast">
+    <p class="report-brand">Smart Audit Live · Arsip Dokumen</p>
+    <h2 id="reportTitle">${esc(title)}</h2>
+    <p><strong>${esc(c.name)}</strong> · ${esc(SECTORS[c.sector]?.name||'')}</p>
+  </header>
+  ${reportSection('Daftar Arsip',['No.','Nama Berkas','Jenis Dokumen','Tanggal Arsip'],
+    entries.map(({doc},index)=>[index+1,doc.name,doc.type,reportDate(doc.date)]),
+    `${fmt(entries.length)} dokumen`)}`;
+  openPrintReport(contents,title,c.name);
+}
+function vDokumen(c){
+  const year=selectedDocumentYear(c);
+  return mhead("Dokumen","Modul 08","Arsipkan dokumen audit dan cetak daftar dokumen menurut tahun.")+`
+  <section class="card" id="documentArchive">${renderDocumentArchive(c,year)}</section>
+  <form class="card" id="documentForm" novalidate>
+    <h3>Unggah Dokumen</h3>
+    <div class="formgrid three form-actions">
+      ${inputField('dcYear','Tahun Dokumen',`type="number" min="1900" max="9999" step="1" value="${esc(year||localYear())}"`,true)}
+      <div class="field">${fieldLabel('dcType','Jenis Dokumen',true)}
+        <select id="dcType" class="field" required>${DOCUMENT_TYPES.map(type=>`<option>${esc(type)}</option>`).join('')}</select>
+      </div>
+      ${inputField('dcFile','Berkas','type="file"',true)}
+    </div>
+    <div class="form-actions"><button type="submit" class="btn" id="dcAdd">Unggah Dokumen</button>${formStatus}</div>
+  </form>`;
+}
+function bindDokumen(c){
+  const archive=$('documentArchive');
+  const uploadYear=$('dcYear');
+  let year=selectedDocumentYear(c);
+  const refreshArchive=()=>{
+    archive.innerHTML=renderDocumentArchive(c,year);
+    bindDownloads(archive);
+  };
+  const selectYear=value=>{
+    year=value;
+    documentSelections.set(c,year);
+    const defaultYear=year||localYear();
+    if(uploadYear.value===uploadYear.defaultValue)uploadYear.value=defaultYear;
+    uploadYear.defaultValue=defaultYear;
+    refreshArchive();
+  };
+  archive.onchange=event=>{
+    if(event.target.id!=='dcFilter')return;
+    selectYear(event.target.value);
+    $('dcFilter').focus();
+  };
+  archive.onclick=async event=>{
+    if(event.target.closest('#dcPrint')){
+      const entries=documentsForYear(c,year);
+      if(entries.length)openDocumentsReport(c,year,entries);
+      return;
+    }
+    const button=event.target.closest('[data-deld]');
+    if(!button)return;
+    const index=Number(button.dataset.deld);
+    const file=c.docs[index].file;
+    if(!await saveChange(c,{docs:c.docs.filter((_,i)=>i!==index)},archive))return;
+    removeAttachment(file);
+    refreshArchive();
+    showStatus(archive,'Dokumen dihapus dari arsip.');
+  };
+  bindForm('documentForm',form=>{
+    const chosenYear=String(Number(uploadYear.value));
+    const type=$('dcType').value;
+    saveWithAttachment(form,$('dcFile').files[0],async file=>{
+      const doc={name:file.name,type,year:chosenYear,date:localArchiveDate(),file};
+      if(!await saveChange(c,{docs:[...c.docs,doc]},form))return false;
+      selectYear(chosenYear);
+      form.reset();
+      showStatus(form,`Dokumen tersimpan untuk tahun ${chosenYear}.`);
+      return true;
+    });
+  });
+}
+
+/* ============ helpers ============ */
+function mhead(title,eyebrow,desc){return `<div class="mhead"><div><div class="eyebrow">${eyebrow}</div><h2>${title}</h2><p>${desc}</p></div></div>`;}
+
+/* ============ modal tambah klien ============ */
+function fillSectorSelect(){$('mSector').innerHTML=Object.entries(SECTORS).map(([k,s])=>`<option value="${k}">${s.name} (≥${fmt(s.thr)} TOE) — ${s.ex}</option>`).join('');}
+function openModal(){fillSectorSelect();$('mName').value='';showStatus($('overlay'),'');$('overlay').classList.add('show');setTimeout(()=>$('mName').focus(),50);}
+function closeModal(){$('overlay').classList.remove('show');}
+async function saveModal(){
+  const name=textValue('mName');
+  if(!name){$('mName').focus();return;}
+  const c=blankCompany(name,$('mSector').value);
+  if(await saveChange(state,{companies:[...state.companies,c],currentId:c.id,view:'profil'},$('overlay'))){
+    closeModal();
+    render();
+  }
+}
+
+/* ============ demo ============ */
+async function loadDemo(){
+  const c=blankCompany(cloud?"Contoh BKI — Kantor Pusat":"BKI — Kantor Pusat","BANGUNAN");
+  c.jamOperasi="08.00–17.00 (Sen–Jum)";
+  c.deskripsi="Lembaga klasifikasi & statutoria kapal; kantor pusat Jakarta + 12 cabang komersial. Konsumsi didominasi tata udara & tata cahaya.";
+  c.area_m2=28800;
+  c.managers=[{role:"Manajer Energi",name:"—",cert:"BNSP Manajer Energi"},{role:"Ketua Tim Audit",name:"—",cert:"BNSP Auditor Energi"}];
+  c.audit={tanggal:"2027-03-15",lingkup:"Kantor pusat & 12 cabang komersial",metode:"Walkthrough + pengukuran + analisis data 12 bulan"};
+  c.consumption={listrik_kwh:5250000,solar_l:69444,gas_m3:17861,batubara_kg:0,lpg_kg:0};
+  c.travel={business:[{mode:"Kereta",distance:120,count:46,fuel:null}],
+    commuting:[{mode:"Sepeda motor",distance:12,count:1200,fuel:380}],notes:"Contoh data dari klaim perjalanan dan survei karyawan."};
+  c.savings_pct=14;
+  c.recs=[{title:"Retrofit chiller & tata udara",save:640000000,pb:"2,1 th",pr:"hi"},
+    {title:"Konversi lampu ke LED + sensor",save:210000000,pb:"1,3 th",pr:"hi"},
+    {title:"PV rooftop 250 kWp",save:390000000,pb:"5,4 th",pr:"md"},
+    {title:"Optimasi jadwal genset",save:95000000,pb:"0,4 th",pr:"ok"}];
+  c.certs=[{type:"Sertifikat",name:"ISO 14001:2015",no:"DEMO-14001",issuer:"Lembaga Sertifikasi",year:"2023",file:""},
+    {type:"Penghargaan",name:"PROPER Biru",no:"DEMO-2024",issuer:"KLHK",year:"2024",file:""}];
+  c.qualif=[{name:"—",role:"Manajer Energi",no:"BNSP-ME-0001",valid:"2027"},{name:"—",role:"Auditor Energi",no:"BNSP-AE-0001",valid:"2027"}];
+  c.docs=[{name:"Data Konsumsi Energi 2024.xlsx",type:"Excel Data Konsumsi",year:"2024",date:"2025-01-20"},
+    {name:"Draft Laporan Audit Energi.pdf",type:"Laporan Audit Energi",year:"2025",date:"2025-02-11"}];
+  c.auditYear="2027";
+  c.auditYears[c.auditYear]=annualRecord(c,{audit:c.audit,consumption:c.consumption,travel:c.travel,recs:c.recs,savings_pct:c.savings_pct});
+  if(await saveChange(state,{companies:[...state.companies,c],currentId:c.id,view:'dashboard'},$('main')))render();
+}
+
+/* ============ init ============ */
+$('btnAdd').disabled=true;
+$('btnAdd').onclick=openModal;
+$('mCancel').onclick=closeModal; $('mSave').onclick=saveModal;
+$('overlay').onclick=e=>{if(e.target===$('overlay'))closeModal();};
+$('closeReport').onclick=()=>$('annualReport').close();
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+function tick(){const e=$('clock');if(e)e.textContent=new Date().toLocaleTimeString('id-ID',{hour12:false});}
+setInterval(tick,1000);tick();
+async function start(){
+  try{
+    if(cloud)$('main').textContent='Memuat ruang kerja bersama…';
+    const data=cloud?await cloud.open():readLocal(KEY);
+    const preference=cloud?readLocal(VIEW_KEY):data;
+    state={
+      companies:data?.companies||[],
+      regs:data?.regs||DEFAULT_REGS.slice(),
+      currentId:preference?.currentId||null,
+      view:preference?.view||'dashboard'
+    };
+    state.companies.forEach(migrateCompany);
+    if(!current())state.currentId=state.companies[0]?.id||null;
+    $('btnAdd').disabled=false;
+    bindBackup();
+    render();
+    if(cloud?.isNewWorkspace()&&!state.companies.length)await loadDemo();
+  }catch(error){
+    $('main').textContent='';
+    reportStorageError(null,cloud&&error.status?error.message:'Smart Audit gagal dimuat. Segarkan halaman untuk mencoba lagi.');
+  }
+}
+start();
+</script>
+</body>
+</html>

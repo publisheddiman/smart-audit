@@ -1,0 +1,6 @@
+**/.data/
+**/.env*
+**/.dev.vars*
+**/.wrangler/
+online/public/
+**/*.test.mjs

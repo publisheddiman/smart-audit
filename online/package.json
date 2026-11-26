@@ -1,0 +1,11 @@
+{
+  "name": "smart-audit-online",
+  "private": true,
+  "type": "module",
+  "engines": {"node": ">=22.12"},
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "node --experimental-sqlite dev.mjs",
+    "test": "node --experimental-sqlite --test workspace.test.mjs"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "smart-audit-vercel",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "build": "node vercel/build.mjs",
+    "test": "node --experimental-sqlite --test online/workspace.test.mjs vercel/workspace.test.mjs"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "1.2.1",
+    "@vercel/blob": "2.9.0"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.6.0",
+    "esbuild": "0.28.2"
+  },
+  "overrides": {
+    "@vercel/cli-config": {"zod": "4.6.6"}
+  }
+}
